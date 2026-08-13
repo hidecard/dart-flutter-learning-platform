@@ -1,6 +1,6 @@
 import type { Chapter, CoursePart } from "@shared/courseCatalog";
 import { lessonPlaygroundHref } from "@shared/playground";
-import { Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, ListOrdered, PlayCircle, Target, TriangleAlert } from "lucide-react";
+import { BookOpen, Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, ListOrdered, PlayCircle, Target, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 
@@ -79,6 +79,40 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
             {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>
         ))}
+
+        {chapter.topicExplanations.length > 0 && (
+          <section className="rounded-2xl border border-cyan-100 bg-cyan-50/60 p-5 sm:p-6" aria-labelledby="topic-explanations-heading">
+            <div className="flex items-center gap-2 text-cyan-950">
+              <BookOpen className="h-5 w-5" />
+              <h2 id="topic-explanations-heading" className="!mb-0 !text-xl">Topic တစ်ခုချင်းစီကို အသေးစိတ်နားလည်မယ်</h2>
+            </div>
+            <p className="mt-3 text-sm leading-7 text-slate-700">ဒီအပိုင်းမှာ keyword သို့မဟုတ် widget တစ်ခုကို အမည်သိရုံနဲ့မပြီးဘဲ ဘာကြောင့်သုံးရသည်၊ Dart/Flutter က အတွင်းမှာဘယ်လိုစီမံသည်၊ code ကိုဘယ်လိုဖတ်ရသည်နှင့် project ထဲမှာဘယ်အချိန်အသုံးဝင်သည်တို့ကို တစ်ခုချင်းစီရှင်းပြထားပါသည်။</p>
+            <div className="mt-6 space-y-6">
+              {chapter.topicExplanations.map((topic) => (
+                <article key={topic.name} className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-cyan-100 sm:p-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-cyan-100 px-2.5 py-1 text-[11px] font-extrabold tracking-wide text-cyan-900">{topic.category}</span>
+                    <h3 className="text-xl font-extrabold leading-8 text-slate-950">{topic.name}</h3>
+                  </div>
+                  <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                    <div><h4 className="text-sm font-extrabold text-cyan-900">ဘာကြောင့်သုံးသလဲ</h4><p className="mt-2 text-sm leading-7 text-slate-700">{topic.purpose}</p></div>
+                    <div><h4 className="text-sm font-extrabold text-cyan-900">Syntax ပုံစံ</h4><pre className="mt-2 overflow-x-auto rounded-xl bg-slate-950 p-4 text-xs leading-6 text-amber-200"><code>{topic.syntax}</code></pre></div>
+                  </div>
+                  <div className="mt-5"><h4 className="text-sm font-extrabold text-cyan-900">ဘယ်လိုအလုပ်လုပ်သလဲ</h4><p className="mt-2 text-sm leading-7 text-slate-700">{topic.howItWorks}</p></div>
+                  <div className="mt-5 grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+                    <div><h4 className="text-sm font-extrabold text-cyan-900">လက်တွေ့ Code</h4><pre className="mt-2 overflow-x-auto rounded-xl bg-slate-950 p-4 text-xs leading-6 text-slate-100"><code>{topic.example}</code></pre></div>
+                    <div><h4 className="text-sm font-extrabold text-cyan-900">မျှော်မှန်းရလဒ်</h4><p className="mt-2 rounded-xl bg-emerald-50 p-4 text-sm leading-7 text-emerald-950">{topic.output}</p></div>
+                  </div>
+                  <div className="mt-5"><h4 className="text-sm font-extrabold text-cyan-900">Code ကိုတစ်ကြောင်းချင်းဖတ်နည်း</h4><ol className="mt-2 space-y-2">{topic.lineByLine.map((line, index) => <li key={line} className="flex gap-3 text-sm leading-7 text-slate-700"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-700 text-xs font-bold text-white">{index + 1}</span><span>{line}</span></li>)}</ol></div>
+                  <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                    <div><h4 className="text-sm font-extrabold text-rose-900">မကြာခဏမှားတတ်သောအချက်များ</h4><div className="mt-2 space-y-2">{topic.mistakes.map((item) => <div key={item.mistake} className="rounded-xl bg-rose-50 p-3 text-sm leading-7 text-slate-700"><strong className="text-rose-900">{item.mistake}</strong><br />ပြင်ဆင်နည်း — {item.fix}</div>)}</div></div>
+                    <div><h4 className="text-sm font-extrabold text-cyan-900">Project ထဲမှာဘယ်လိုသုံးမလဲ</h4><p className="mt-2 rounded-xl bg-cyan-50 p-4 text-sm leading-7 text-slate-700">{topic.practicalUse}</p></div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="rounded-2xl border border-sky-100 bg-sky-50/70 p-5 sm:p-6" aria-labelledby="goals-heading">
           <div className="flex items-center gap-2 text-sky-950"><Target className="h-5 w-5" /><h2 id="goals-heading" className="!mb-0 !text-xl">ဒီအခန်းပြီးလျှင် လုပ်နိုင်ရမည့်အရာများ</h2></div>

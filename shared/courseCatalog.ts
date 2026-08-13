@@ -1,4 +1,5 @@
 import { fallbackStudyGuide, lessonStudyGuides, type StudyGuide } from "./lessonStudyGuides";
+import { topicExplanationsForChapter, type TopicExplanation } from "./topicExplanations";
 
 export type CodeExample = {
   language: string;
@@ -30,6 +31,7 @@ export type Chapter = {
   guidedSteps: GuidedStep[];
   code: CodeExample;
   studyGuide: StudyGuide;
+  topicExplanations: TopicExplanation[];
   challenge: string;
   checklist: string[];
 };
@@ -98,6 +100,7 @@ const lesson = (
   ],
   code: { language: "dart", code, annotations },
   studyGuide: lessonStudyGuides[id] ?? fallbackStudyGuide,
+  topicExplanations: topicExplanationsForChapter(id),
   challenge,
   checklist,
 });
