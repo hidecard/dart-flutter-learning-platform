@@ -52,4 +52,7 @@
 - [x] Replace W3-style lesson roadmaps with detailed book-like Burmese Flutter explanations and broaden advanced Flutter topic coverage.
 - [x] Add Turso-backed full-course completion tracking, certificate eligibility checks, and secure certificate issuance.
 - [x] Build a learner progress dashboard with clear overall/part progress bars and a printable completion certificate.
-- [ ] Test, publish, and verify the enhanced curriculum, progress, and certificate experience.
+- [x] Test, publish, and verify the enhanced curriculum, progress, and certificate experience.
+- [ ] Verify the live Vercel learner route renders the updated 56-chapter advanced Flutter content after the latest deployment.
+- [ ] Verify authenticated production progress and certificate eligibility behavior without altering learner completion data.
+- [x] Remove the remaining visible Step-by-Step wording from legacy lesson titles before the final production verification.
