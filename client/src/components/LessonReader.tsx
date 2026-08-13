@@ -1,6 +1,8 @@
 import type { Chapter, CoursePart } from "@shared/courseCatalog";
+import { lessonPlaygroundHref } from "@shared/playground";
 import { Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, ListOrdered, PlayCircle, Target, TriangleAlert } from "lucide-react";
 import { useState } from "react";
+import { Link } from "wouter";
 
 type LessonReaderProps = {
   chapter: Chapter;
@@ -111,6 +113,7 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
             </div>
             <pre className="overflow-x-auto p-5 text-[13px] leading-7 text-slate-100"><HighlightedCode code={chapter.code.code} /></pre>
           </div>
+          <Link href={lessonPlaygroundHref(chapter.id)} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-teal-800"><PlayCircle className="h-4 w-4" />Browser Playground တွင် စမ်းမည်</Link>
         </section>
 
         <section className="rounded-2xl border border-teal-100 bg-teal-50/70 p-5 sm:p-6" aria-labelledby="annotation-heading">

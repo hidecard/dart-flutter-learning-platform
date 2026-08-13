@@ -30,10 +30,10 @@ function LandingPage({ onStart, completedIds, parts }: { onStart: () => void; co
   const totalChapters = parts.flatMap((part) => part.chapters).length;
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f7f8f6] text-slate-950">
-      <header className="border-b border-slate-200/80 bg-[#f7f8f6]/85 backdrop-blur">
+          <header className="border-b border-slate-200/80 bg-[#f7f8f6]/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
           <button onClick={onStart} className="flex items-center gap-3 text-left"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-teal-300"><BookOpen className="h-5 w-5" /></span><span><strong className="block text-sm">Dart & Flutter</strong><span className="block text-xs text-slate-500">Masterclass</span></span></button>
-          <div className="flex items-center gap-4"><Link href="/glossary" className="hidden text-sm font-semibold text-slate-600 hover:text-teal-700 sm:block">ဝေါဟာရစာအုပ်</Link><button onClick={onStart} className="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800">သင်ခန်းစာစတင်မည်</button></div>
+          <div className="flex items-center gap-4"><Link href="/playground" className="hidden text-sm font-semibold text-slate-600 hover:text-teal-700 md:block">Dart Playground</Link><Link href="/glossary" className="hidden text-sm font-semibold text-slate-600 hover:text-teal-700 sm:block">ဝေါဟာရစာအုပ်</Link><button onClick={onStart} className="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800">သင်ခန်းစာစတင်မည်</button></div>
         </div>
       </header>
 
