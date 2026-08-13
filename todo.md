@@ -58,7 +58,7 @@
 - [x] Remove the remaining visible Step-by-Step wording from legacy lesson titles before the final production verification.
 - [x] Add topic-by-topic Burmese explanations for Dart declarations and Flutter widgets, including purpose, syntax, execution behavior, annotated examples, output, mistakes, and practical usage.
 - [x] Render the topic explanation sections in the learner reader and keep lesson code/playground links compatible.
-- [ ] Test, checkpoint, push, and deploy the topic-level detailed curriculum update.
+- [x] Test, checkpoint, push, and deploy the topic-level detailed curriculum update.
 
 စီမံချက်မှတ်ချက်: User requested book-like explanations for topics such as var, final, const, variable declarations, Text, Drawer, Column, and buttons, including why they are used, how they work, code examples, output, and common mistakes.
 
@@ -67,4 +67,4 @@
 - [x] Design reusable topic explanation structure.
 - [x] Write and integrate detailed Burmese Dart and Flutter topic content.
 - [x] Render topic explanations in the learner reader and preserve playground compatibility.
-- [ ] Run tests/build, save checkpoint, push GitHub, deploy Vercel, and verify the update.
+- [x] Run tests/build, save checkpoint, push GitHub, deploy Vercel, and verify the update.
