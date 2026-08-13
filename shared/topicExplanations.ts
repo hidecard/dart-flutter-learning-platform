@@ -149,6 +149,57 @@ const flutterWidgets: TopicExplanation[] = [
   }
 ];
 
+const pdfProjectTopics: TopicExplanation[] = [
+  {
+    name: "HTTP Request Anatomy — method, URL, header, body နှင့် status",
+    category: "Flutter",
+    purpose: "Network feature တစ်ခုကို ရေးရာမှာ request တစ်ခုထဲတွင် ဘာတွေပါဝင်သည်ကို သိမှ API error ကို မှန်ကန်စွာရှာနိုင်ပါသည်။ URL က ဘယ် resource ကိုသွားမည်၊ method က ဘာလုပ်မည်၊ header က metadata/authorization ကိုသယ်မည်၊ body ကပို့မည့် data ဖြစ်ပြီး status code က server ရလဒ်ကိုပြပါသည်။",
+    syntax: "final response = await client.get(Uri.parse(url), headers: headers);",
+    howItWorks: "Dart ၏ await သည် network response ပြန်ရောက်သည်အထိ function flow ကို ခဏရပ်ထားသော်လည်း UI thread ကို မပိတ်ပါ။ Response ရောက်လာလျှင် statusCode ကိုစစ်ပြီး 200 range ကို success, 400 range ကို client input problem, 500 range ကို server problem အဖြစ် UI state သို့ map လုပ်ရပါသည်။",
+    example: "Future<String> loadGreeting(http.Client client) async {\n  final uri = Uri.parse('https://example.com/greeting');\n  final response = await client.get(\n    uri,\n    headers: {'Accept': 'application/json'},\n  );\n\n  if (response.statusCode != 200) {\n    throw Exception('Request failed: ${response.statusCode}');\n  }\n  return response.body;\n}",
+    output: "statusCode 200 ရလျှင် response.body ကို UI model သို့ parse လုပ်နိုင်ပြီး error status ဖြစ်လျှင် error state သို့ပြောင်းနိုင်သည်။",
+    lineByLine: ["Uri.parse သည် string URL ကို Dart ၏ Uri object အဖြစ်ပြောင်းသည်။", "await client.get သည် GET request ပို့ပြီး response မရမချင်း Future ကိုစောင့်သည်။", "Accept header က server ထံမှ မျှော်မှန်းသော response format ကိုပြသည်။", "statusCode စစ်ခြင်းမရှိဘဲ body ကိုအသုံးပြုလျှင် error JSON ကို success data ဟုမှားဖတ်နိုင်သည်။"],
+    mistakes: [{ mistake: "API key ကို Flutter client ထဲ hardcode လုပ်ခြင်း", fix: "လျှို့ဝှက် key နှင့် authorization decision ကို server boundary နောက်တွင်ထားပါ။" }, { mistake: "loading/error state မပြဘဲ request တစ်ခုတည်းကို screen build ထဲခေါ်ခြင်း", fix: "initState, controller သို့မဟုတ် state management flow ထဲတွင် တစ်ကြိမ်စီစီမံပြီး loading, success, error state သုံးမျိုးပြပါ။" }],
+    practicalUse: "Login, product list, chat messages, profile update နှင့် remote configuration feature များတွင် request anatomy ကို ဒီပုံစံဖြင့်ဖတ်ပါ။"
+  },
+  {
+    name: "Audio Progress — duration နှင့် position ကို UI နှင့်ချိတ်ခြင်း",
+    category: "Flutter",
+    purpose: "Song player တွင် play/pause ခလုတ်တင်မကဘဲ သီချင်းဘယ်လောက်ကြာသည်၊ လက်ရှိဘယ်နေရာရောက်သည်နှင့် user က ဘယ်နေရာသို့ seek လုပ်လိုသည်ကို ပြသရန် duration နှင့် position state လိုအပ်ပါသည်။",
+    syntax: "StreamBuilder<Duration>(stream: positionStream, builder: (_, snapshot) => Slider(value: seconds, onChanged: seek));",
+    howItWorks: "Audio engine က position update များကို stream ဖြင့်ပို့နိုင်ပါသည်။ Widget က stream ကိုနားထောင်ပြီး snapshot data ပြောင်းတိုင်း rebuild လုပ်သည်။ Slider value သည် 0 နှင့် duration ကြားတွင်သာရှိရပြီး duration မရသေးချိန်တွင် division by zero နှင့် invalid value မဖြစ်အောင် guard လုပ်ရပါသည်။",
+    example: "class SongProgress extends StatelessWidget {\n  const SongProgress({required this.position, required this.duration, super.key});\n  final Duration position;\n  final Duration duration;\n\n  @override\n  Widget build(BuildContext context) {\n    final max = duration.inMilliseconds.toDouble();\n    final value = max == 0\n        ? 0.0\n        : position.inMilliseconds.clamp(0, duration.inMilliseconds).toDouble();\n    return Slider(value: value, max: max == 0 ? 1 : max, onChanged: (_) {});\n  }\n}",
+    output: "သီချင်းဖွင့်နေစဉ် slider thumb သည် လက်ရှိ position အတိုင်းရွေ့ပြီး duration မရသေးချိန်တွင် crash မဖြစ်ပါ။",
+    lineByLine: ["position နှင့် duration ကို widget input အဖြစ်ခွဲထားခြင်းသည် player engine နှင့် UI ကိုမရောစေပါ။", "max သည် slider ၏အဆုံးတန်ဖိုးဖြစ်သည်။", "clamp သည် server/player မှရလာသောတန်ဖိုးကို valid range အတွင်းကာကွယ်သည်။", "duration သုညဖြစ်လျှင် max ကို 1 သတ်မှတ်ခြင်းက Slider assertion ကိုရှောင်သည်။"],
+    mistakes: [{ mistake: "duration သုညဖြစ်နိုင်သည်ကို မစစ်ခြင်း", fix: "metadata မရသေးချိန်တွင် fallback max/value ထားပါ။" }, { mistake: "controller ကို dispose မလုပ်ခြင်း", fix: "StatefulWidget ၏ dispose ထဲတွင် audio controller နှင့် stream subscription ကိုပိတ်ပါ။" }],
+    practicalUse: "Music app, podcast, audiobook နှင့် video player များတွင် progress UI တည်ဆောက်ရာ၌သုံးပါ။"
+  },
+  {
+    name: "Infinite ListView — စာရင်းရှည်ကို page အလိုက်တင်ခြင်း",
+    category: "Flutter",
+    purpose: "Data အားလုံးကို တစ်ခါတည်း download မလုပ်ဘဲ user scroll နီးလာချိန်တွင် နောက်ထပ် page တစ်ခုတောင်းခြင်းက memory, startup time နှင့် network cost ကိုလျှော့စေပါသည်။",
+    syntax: "if (controller.position.pixels >= controller.position.maxScrollExtent - 240) loadNextPage();",
+    howItWorks: "ScrollController သည် scroll position ကိုသိစေပါသည်။ maxScrollExtent အနီးရောက်လျှင် loading flag ကိုစစ်ပြီး page number တိုးကာ API request ပို့ရပါသည်။ loading flag မထားလျှင် scroll event များကြောင့် request အများကြီးထပ်ပို့နိုင်ပါသည်။",
+    example: "void onScroll() {\n  final nearBottom = controller.position.pixels >=\n      controller.position.maxScrollExtent - 240;\n  if (nearBottom && !isLoading && hasMore) {\n    loadNextPage();\n  }\n}",
+    output: "စာရင်းအောက်ဆုံးမရောက်မီ နောက်ထပ် data တက်လာပြီး request များ ထပ်ခါတလဲလဲ မပို့ပါ။",
+    lineByLine: ["pixels သည် လက်ရှိ scroll offset ဖြစ်သည်။", "maxScrollExtent သည် scroll ရနိုင်သောအဆုံးကိုပြသည်။", "240 သည် ကြိုတင်တင်ရန် threshold ဖြစ်သည်။", "isLoading နှင့် hasMore သည် duplicate request နှင့် data ကုန်ပြီးနောက် request ကိုကာကွယ်သည်။"],
+    mistakes: [{ mistake: "ListView item key မပေးခြင်း", fix: "ပြောင်းလဲနိုင်သော list တွင် stable Key သုံးပြီး state မလွဲစေပါနှင့်။" }, { mistake: "scroll listener ကို dispose မလုပ်ခြင်း", fix: "dispose ထဲတွင် controller.removeListener နှင့် controller.dispose ကိုလုပ်ပါ။" }],
+    practicalUse: "Name generator, product catalog, social feed, search result နှင့် admin table များတွင်သုံးပါ။"
+  },
+  {
+    name: "Debug Assertion — error ကို အစောဆုံးဖမ်းခြင်း",
+    category: "Flutter",
+    purpose: "Assertion သည် developer က မဖြစ်သင့်ဟုသတ်မှတ်ထားသော condition ကို debug mode တွင်စစ်ပြီး data မမှန်လျှင် error ကို အစောဆုံးပြစေပါသည်။ UI ပျက်ပြီးနောက်မှ ခန့်မှန်းခြင်းထက် invalid state ကို boundary မှာဖမ်းနိုင်ပါသည်။",
+    syntax: "assert(items.isNotEmpty, 'items must not be empty');",
+    howItWorks: "Debug mode တွင် condition false ဖြစ်လျှင် assertion error ထွက်ပြီး stack trace က code နေရာကိုပြပါသည်။ Release mode တွင် assertion များကို မမှီခိုသင့်သောကြောင့် user input validation သို့မဟုတ် security check အစား မသုံးရပါ။",
+    example: "class ProductList extends StatelessWidget {\n  const ProductList({required this.items, super.key});\n  final List<String> items;\n\n  @override\n  Widget build(BuildContext context) {\n    assert(items.isNotEmpty, 'Product list cannot be empty here');\n    return ListView(children: items.map(Text.new).toList());\n  }\n}",
+    output: "Debug run တွင် items အလွတ်ဖြစ်ပါက stack trace နှင့် ရှင်းလင်းသော message ရမည်။",
+    lineByLine: ["items သည် widget ထံရောက်လာသော input list ဖြစ်သည်။", "assert က developer contract ကိုစစ်သည်။", "map(Text.new) က item တစ်ခုချင်းကို Text widget အဖြစ်ပြောင်းသည်။", "Empty state လိုအပ်သော screen များတွင် assertion အစား UI empty state ကိုပြပါ။"],
+    mistakes: [{ mistake: "assert ကို security validation အဖြစ်သုံးခြင်း", fix: "server validation, permission check နှင့် user-facing validation ကို သီးခြားလုပ်ပါ။" }, { mistake: "production တွင် assertion အမြဲ run မည်ဟုယူဆခြင်း", fix: "release behavior အတွက်လည်း သင့်တော်သော error handling ထည့်ပါ။" }],
+    practicalUse: "Widget contract, model invariant, debugging workflow နှင့် regression စမ်းသပ်မှုများတွင် assertion သုံးပါ။"
+  }
+];
+
 const byChapter: Record<number, TopicExplanation[]> = {
   2: dartDeclarations,
   6: [flutterWidgets[4]],
@@ -158,6 +209,10 @@ const byChapter: Record<number, TopicExplanation[]> = {
   11: [flutterWidgets[5]],
   28: [flutterWidgets[6]],
   32: [flutterWidgets[4], flutterWidgets[0]],
+  13: [pdfProjectTopics[0]],
+  15: [pdfProjectTopics[1]],
+  19: [pdfProjectTopics[3]],
+  29: [pdfProjectTopics[2]],
   35: [flutterWidgets[1], flutterWidgets[2], flutterWidgets[3]],
 };
 

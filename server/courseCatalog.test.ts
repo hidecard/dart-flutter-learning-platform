@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { allChapters, courseParts, searchCourse } from "../shared/courseCatalog";
 import { flutterPdfCoverage, flutterPdfTopicCount } from "../shared/flutterPdfCoverage";
+import { flutterPdfGapAnalysis, pdfMissingOrShallowTopicCount } from "../shared/flutterPdfGapAnalysis";
 
 describe("course catalog", () => {
   it("contains the detailed curriculum and the advanced Flutter platform coverage", () => {
@@ -47,6 +48,12 @@ describe("course catalog", () => {
       expect(entry.originalCoverage.length).toBeGreaterThan(40);
       expect(entry.mappedChapterIds.every((id) => allChapters.some((chapter) => chapter.id === id))).toBe(true);
     }
+  });
+
+  it("documents explicit missing or shallow PDF topics for follow-up expansion", () => {
+    expect(flutterPdfGapAnalysis.length).toBeGreaterThanOrEqual(10);
+    expect(pdfMissingOrShallowTopicCount).toBeGreaterThanOrEqual(30);
+    expect(flutterPdfGapAnalysis.every((gap) => gap.plannedChapterIds.length > 0 && gap.BurmesePlan.length > 30)).toBe(true);
   });
 
   it("returns no lessons for an empty search", () => {
