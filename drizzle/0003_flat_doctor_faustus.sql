@@ -1,0 +1,1 @@
+ALTER TABLE `lessonContent` MODIFY COLUMN `contentJson` mediumtext NOT NULL;

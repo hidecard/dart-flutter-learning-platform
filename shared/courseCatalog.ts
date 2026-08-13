@@ -23,6 +23,11 @@ export type Chapter = {
   checklist: string[];
 };
 
+export type EditableLessonContent = Pick<
+  Chapter,
+  "title" | "summary" | "duration" | "level" | "topics" | "sections" | "code" | "challenge" | "checklist"
+>;
+
 export type CoursePart = {
   id: string;
   title: string;
@@ -143,6 +148,28 @@ export const allChapters = courseParts.flatMap((part) =>
   part.chapters.map((chapter) => ({ ...chapter, partId: part.id, partTitle: part.title })),
 );
 
+export function toEditableLessonContent(chapter: Chapter): EditableLessonContent {
+  return {
+    title: chapter.title,
+    summary: chapter.summary,
+    duration: chapter.duration,
+    level: chapter.level,
+    topics: chapter.topics,
+    sections: chapter.sections,
+    code: chapter.code,
+    challenge: chapter.challenge,
+    checklist: chapter.checklist,
+  };
+}
+
+export function mergeEditableLessonContent(overrides: { chapterId: number; content: EditableLessonContent }[]) {
+  const overridesByChapter = new Map(overrides.map((override) => [override.chapterId, override.content]));
+  return allChapters.map((chapter) => {
+    const override = overridesByChapter.get(chapter.id);
+    return override ? { ...chapter, ...override } : chapter;
+  });
+}
+
 export const glossaryTerms = [
   { term: "Widget", definition: "Flutter UI ကိုဖော်ပြသော immutable building block ဖြစ်သည်။" },
   { term: "State", definition: "Screen သို့မဟုတ် application တစ်ခု၏အချိန်နှင့်အမျှပြောင်းနိုင်သောအခြေအနေဖြစ်သည်။" },
@@ -154,11 +181,11 @@ export const glossaryTerms = [
   { term: "CI/CD", definition: "Code quality စစ်ဆေးခြင်းနှင့်build/release လုပ်ငန်းစဉ်ကိုအလိုအလျောက်ပြုလုပ်သောworkflow ဖြစ်သည်။" },
 ];
 
-export function searchCourse(query: string) {
+export function searchCourse(query: string, chapters = allChapters) {
   const normalized = query.trim().toLocaleLowerCase();
   if (!normalized) return [];
 
-  return allChapters.filter((chapter) => {
+  return chapters.filter((chapter) => {
     const searchableText = [
       chapter.title,
       chapter.summary,

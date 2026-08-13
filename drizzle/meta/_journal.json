@@ -15,6 +15,20 @@
       "when": 1786630769847,
       "tag": "0001_goofy_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786631478932,
+      "tag": "0002_sleepy_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1786631828998,
+      "tag": "0003_flat_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

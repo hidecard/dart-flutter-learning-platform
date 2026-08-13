@@ -1,10 +1,45 @@
 import { COOKIE_NAME } from "@shared/const";
-import { allChapters, searchCourse } from "@shared/courseCatalog";
+import { allChapters, EditableLessonContent, mergeEditableLessonContent, searchCourse } from "@shared/courseCatalog";
 import { z } from "zod";
-import { getChapterProgressForUser, setChapterProgress } from "./db";
+import { deleteLessonContentOverride, getChapterProgressForUser, getLessonContentOverrides, setChapterProgress, upsertLessonContentOverride } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
+
+const editableLessonContentSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  summary: z.string().trim().min(1).max(2000),
+  duration: z.string().trim().min(1).max(50),
+  level: z.string().trim().min(1).max(80),
+  topics: z.array(z.string().trim().min(1).max(60)).min(1).max(12),
+  sections: z.array(z.object({
+    heading: z.string().trim().min(1).max(200),
+    paragraphs: z.array(z.string().trim().min(1).max(6000)).min(1).max(12),
+  })).min(1).max(12),
+  code: z.object({
+    language: z.string().trim().min(1).max(40),
+    code: z.string().min(1).max(30000),
+    annotations: z.array(z.object({
+      label: z.string().trim().min(1).max(100),
+      detail: z.string().trim().min(1).max(1000),
+    })).max(20),
+  }),
+  challenge: z.string().trim().min(1).max(3000),
+  checklist: z.array(z.string().trim().min(1).max(500)).min(1).max(12),
+});
+
+async function getMergedCatalog() {
+  const rows = await getLessonContentOverrides();
+  const overrides = rows.flatMap((row) => {
+    try {
+      return [{ chapterId: row.chapterId, content: editableLessonContentSchema.parse(JSON.parse(row.contentJson)) as EditableLessonContent }];
+    } catch {
+      console.error(`[CMS] Ignoring malformed lesson override for chapter ${row.chapterId}`);
+      return [];
+    }
+  });
+  return mergeEditableLessonContent(overrides);
+}
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -20,16 +55,35 @@ export const appRouter = router({
     }),
   }),
   course: router({
-    catalog: publicProcedure.query(() => allChapters),
+    catalog: publicProcedure.query(() => getMergedCatalog()),
     search: publicProcedure
       .input(z.object({ query: z.string().trim().max(100) }))
-      .query(({ input }) => searchCourse(input.query)),
+      .query(async ({ input }) => searchCourse(input.query, await getMergedCatalog())),
   }),
   progress: router({
     list: protectedProcedure.query(({ ctx }) => getChapterProgressForUser(ctx.user.id)),
     setCompleted: protectedProcedure
       .input(z.object({ chapterId: z.number().int().min(1).max(20), completed: z.boolean() }))
       .mutation(({ ctx, input }) => setChapterProgress(ctx.user.id, input.chapterId, input.completed)),
+  }),
+  cms: router({
+    catalog: adminProcedure.query(() => getMergedCatalog()),
+    lesson: adminProcedure
+      .input(z.object({ chapterId: z.number().int().min(1).max(20) }))
+      .query(async ({ input }) => {
+        const chapter = (await getMergedCatalog()).find((item) => item.id === input.chapterId);
+        if (!chapter) throw new Error("Lesson was not found");
+        return chapter;
+      }),
+    saveLesson: adminProcedure
+      .input(z.object({ chapterId: z.number().int().min(1).max(20), content: editableLessonContentSchema }))
+      .mutation(async ({ ctx, input }) => {
+        if (!allChapters.some((chapter) => chapter.id === input.chapterId)) throw new Error("Lesson was not found");
+        return upsertLessonContentOverride(input.chapterId, JSON.stringify(input.content), ctx.user.id);
+      }),
+    resetLesson: adminProcedure
+      .input(z.object({ chapterId: z.number().int().min(1).max(20) }))
+      .mutation(({ input }) => deleteLessonContentOverride(input.chapterId)),
   }),
 });
 

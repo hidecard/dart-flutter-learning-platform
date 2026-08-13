@@ -13,3 +13,9 @@
 - [x] Build glossary and references pages for core Dart and Flutter terms.
 - [x] Write or update Vitest coverage for course catalog, search behavior, and authenticated progress persistence.
 - [x] Verify the interface visually on desktop and mobile, then save a final project checkpoint.
+- [x] Define the admin CMS lesson content model and secure admin-only access workflow.
+- [x] Add editable lesson-content persistence, validation, and admin-only server procedures.
+- [x] Build a browser-based admin dashboard with lesson listing, search, editor, preview, and save actions.
+- [x] Build a browser-based admin dashboard with lesson listing, search, editor, preview, and save actions.
+- [x] Add admin authorization and lesson-update tests, then visually verify the CMS on desktop and mobile.
+- [x] Add an admin lesson preview that opens the selected chapter in the learner reader after saving.

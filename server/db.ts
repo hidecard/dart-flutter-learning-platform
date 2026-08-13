@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { chapterProgress, InsertUser, users } from "../drizzle/schema";
+import { chapterProgress, InsertUser, lessonContent, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -121,4 +121,31 @@ export async function setChapterProgress(userId: number, chapterId: number, comp
     .where(eq(chapterProgress.userId, userId));
 
   return saved.find((progress) => progress.chapterId === chapterId);
+}
+
+export async function getLessonContentOverrides() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(lessonContent);
+}
+
+export async function upsertLessonContentOverride(chapterId: number, contentJson: string, updatedByUserId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+
+  await db
+    .insert(lessonContent)
+    .values({ chapterId, contentJson, updatedByUserId })
+    .onDuplicateKeyUpdate({
+      set: { contentJson, updatedByUserId },
+    });
+
+  const rows = await db.select().from(lessonContent).where(eq(lessonContent.chapterId, chapterId)).limit(1);
+  return rows[0];
+}
+
+export async function deleteLessonContentOverride(chapterId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(lessonContent).where(eq(lessonContent.chapterId, chapterId));
 }

@@ -1,4 +1,4 @@
-import { boolean, int, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mediumtext, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -43,3 +43,21 @@ export const chapterProgress = mysqlTable(
 
 export type ChapterProgress = typeof chapterProgress.$inferSelect;
 export type InsertChapterProgress = typeof chapterProgress.$inferInsert;
+
+/** An admin-authored override for one static course chapter. The base catalog remains a safe fallback. */
+export const lessonContent = mysqlTable(
+  "lessonContent",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    chapterId: int("chapterId").notNull(),
+    contentJson: mediumtext("contentJson").notNull(),
+    updatedByUserId: int("updatedByUserId")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [uniqueIndex("lesson_content_chapter_unique").on(table.chapterId)],
+);
+
+export type LessonContent = typeof lessonContent.$inferSelect;
+export type InsertLessonContent = typeof lessonContent.$inferInsert;

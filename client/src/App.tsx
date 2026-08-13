@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import AdminCms from "./pages/AdminCms";
 import Glossary from "./pages/Glossary";
 import Home from "./pages/Home";
 
@@ -12,6 +13,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/admin"} component={AdminCms} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
