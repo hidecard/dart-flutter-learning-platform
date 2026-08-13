@@ -46,6 +46,6 @@
 - [x] Expand all Dart and Flutter lessons with deeper beginner-friendly explanations, code walkthroughs, practical examples, common mistakes, and structured practice.
 - [x] Restructure the curriculum into W3-style step-by-step lessons and add missing Dart and Flutter beginner-to-intermediate topics.
 - [x] Add a browser-based Dart playground with editable lesson code, reset controls, and a safe copy-and-run workflow that opens official DartPad in a browser tab for execution and output.
-- [ ] Create an original Burmese step-by-step Flutter curriculum aligned to the Tutorialspoint topic sequence, then push and deploy the completed update.
-- [ ] Push the original 46-chapter Burmese Flutter curriculum update to the public GitHub repository.
-- [ ] Redeploy the updated public learning platform to Vercel after the GitHub source update is confirmed.
+- [x] Create an original Burmese step-by-step Flutter curriculum aligned to the Tutorialspoint topic sequence, then push and deploy the completed update.
+- [x] Push the original 46-chapter Burmese Flutter curriculum update to the public GitHub repository.
+- [x] Redeploy the updated public learning platform to Vercel after the GitHub source update is confirmed.
