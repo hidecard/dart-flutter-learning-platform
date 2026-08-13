@@ -42,3 +42,4 @@
 - [x] Bundle the Vercel serverless handler so all local server imports resolve at runtime, then verify the live tRPC API.
 - [x] Confirm and complete the GitHub public-visibility change and Vercel deployment.
 - [x] Fix the managed-preview Vite HMR WebSocket connection failure without affecting the Vercel production deployment.
+- [x] Commit and push the verified Vercel deployment and managed-preview WebSocket fixes to the public GitHub repository.
