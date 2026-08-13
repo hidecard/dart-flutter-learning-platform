@@ -19,3 +19,10 @@
 - [x] Build a browser-based admin dashboard with lesson listing, search, editor, preview, and save actions.
 - [x] Add admin authorization and lesson-update tests, then visually verify the CMS on desktop and mobile.
 - [x] Add an admin lesson preview that opens the selected chapter in the learner reader after saving.
+- [x] Review the current database and authentication dependencies for Turso/libSQL compatibility.
+- [x] Add secure Turso environment variables and migrate persisted course progress and CMS content to libSQL.
+- [x] Validate the configured Turso secrets with a read-only connection test.
+- [x] Run the one-time safe import of existing managed-database users, progress, and CMS content into Turso.
+- [x] Verify remote Turso table availability and imported user/progress row counts.
+- [x] Rewire database helpers and tests to use the Turso-compatible data access layer.
+- [ ] Verify the Turso-backed platform and create a private GitHub repository with the complete source code.
