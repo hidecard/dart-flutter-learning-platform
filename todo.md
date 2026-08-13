@@ -49,3 +49,7 @@
 - [x] Create an original Burmese step-by-step Flutter curriculum aligned to the Tutorialspoint topic sequence, then push and deploy the completed update.
 - [x] Push the original 46-chapter Burmese Flutter curriculum update to the public GitHub repository.
 - [x] Redeploy the updated public learning platform to Vercel after the GitHub source update is confirmed.
+- [x] Replace W3-style lesson roadmaps with detailed book-like Burmese Flutter explanations and broaden advanced Flutter topic coverage.
+- [x] Add Turso-backed full-course completion tracking, certificate eligibility checks, and secure certificate issuance.
+- [x] Build a learner progress dashboard with clear overall/part progress bars and a printable completion certificate.
+- [ ] Test, publish, and verify the enhanced curriculum, progress, and certificate experience.

@@ -73,18 +73,9 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
       </div>
 
       <div className="lesson-prose mt-10 space-y-10">
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="guided-steps-heading">
-          <div className="border-b border-slate-200 bg-slate-950 px-5 py-5 text-white sm:px-6">
-            <p className="text-xs font-bold tracking-[0.15em] text-teal-300">STEP-BY-STEP LESSON</p>
-            <h2 id="guided-steps-heading" className="mt-1 !mb-0 !text-xl !text-white">W3 ပုံစံဖြင့် အဆင့်လိုက်သွားမယ်</h2>
-            <p className="mt-2 !text-sm !leading-6 !text-slate-200">Step တစ်ခုစီပြီးမှ နောက်တစ်ဆင့်သို့သွားပါ။ Code ကိုကိုယ်တိုင်ပြင်ပြီး result ကြည့်ခြင်းက အလွတ်ဖတ်ခြင်းထက်ပိုမှတ်မိစေပါသည်။</p>
-          </div>
-          <ol className="divide-y divide-slate-100">{chapter.guidedSteps.map((step, index) => <li key={`${step.label}-${step.title}`} className="grid gap-3 px-5 py-5 sm:grid-cols-[110px_1fr] sm:px-6"><div><span className="inline-flex rounded-md bg-teal-50 px-2.5 py-1 text-xs font-extrabold text-teal-800">{step.label}</span><p className="mt-2 text-sm font-extrabold text-slate-900">{step.title}</p></div><div><p className="text-sm leading-7 text-slate-700">{step.instruction}</p><p className="mt-3 flex gap-2 rounded-lg bg-slate-50 p-3 text-sm leading-6 text-slate-600"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-700" /><span><strong className="text-slate-800">မျှော်လင့်ရလဒ် — </strong>{step.expected}</span></p></div></li>)}</ol>
-        </section>
-
         {chapter.sections.map((section) => (
           <section key={section.heading}>
-            <h2>{section.heading}</h2>
+            <h2>{section.heading.replace(/^STEP\s*\d+\s*[—-]\s*/i, "")}</h2>
             {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>
         ))}
@@ -132,7 +123,7 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
         </section>
 
         <section className="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5 sm:p-6" aria-labelledby="walkthrough-heading">
-          <div className="flex items-center gap-2 text-indigo-950"><ListOrdered className="h-5 w-5" /><h2 id="walkthrough-heading" className="!mb-0 !text-xl">Code ကိုတစ်ဆင့်ချင်းဖတ်မယ်</h2></div>
+          <div className="flex items-center gap-2 text-indigo-950"><ListOrdered className="h-5 w-5" /><h2 id="walkthrough-heading" className="!mb-0 !text-xl">Code ၏အလုပ်လုပ်ပုံကိုနားလည်မယ်</h2></div>
           <ol className="mt-4 space-y-3">{chapter.studyGuide.codeWalkthrough.map((step, index) => <li key={step} className="flex gap-3 rounded-xl bg-white/90 p-4 text-sm leading-6 text-slate-700 ring-1 ring-indigo-100"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-700 text-xs font-extrabold text-white">{index + 1}</span><span>{step}</span></li>)}</ol>
         </section>
 
@@ -150,9 +141,9 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
         </section>
 
         <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-5 sm:p-6" aria-labelledby="practice-heading">
-          <div className="flex items-center gap-2 text-violet-950"><PlayCircle className="h-5 w-5" /><h2 id="practice-heading" className="!mb-0 !text-xl">လက်တွေ့လေ့ကျင့်မှု အဆင့်လိုက်</h2></div>
-          <p className="mt-3 text-sm leading-6 text-slate-600">Challenge ကိုတစ်ခါတည်းမဖြေဘဲ အောက်ပါအစဉ်အတိုင်းလုပ်ဆောင်ပါက concept ကိုပိုမှတ်မိပါမည်။</p>
-          <ol className="mt-4 space-y-3">{chapter.studyGuide.practiceSteps.map((step, index) => <li key={step} className="flex gap-3 rounded-xl bg-white/90 p-4 text-sm leading-6 text-slate-700 ring-1 ring-violet-100"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-700 text-xs font-extrabold text-white">{index + 1}</span><span>{step}</span></li>)}</ol>
+          <div className="flex items-center gap-2 text-violet-950"><PlayCircle className="h-5 w-5" /><h2 id="practice-heading" className="!mb-0 !text-xl">နားလည်မှုခိုင်မာစေရန် စမ်းကြည့်ပါ</h2></div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">အောက်ပါလေ့ကျင့်မှုများသည် အလွတ်ကျက်ခြင်းမဟုတ်ဘဲ concept ကိုကိုယ်တိုင်ပြင်ဆင်၊ စမ်းသပ်ပြီး အကြောင်းရင်းနှင့်တကွနားလည်စေရန်ရည်ရွယ်ပါသည်။</p>
+          <ul className="mt-4 space-y-3">{chapter.studyGuide.practiceSteps.map((step) => <li key={step} className="flex gap-3 rounded-xl bg-white/90 p-4 text-sm leading-6 text-slate-700 ring-1 ring-violet-100"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-violet-700" /><span>{step}</span></li>)}</ul>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="self-check-heading">

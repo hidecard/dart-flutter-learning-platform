@@ -1,6 +1,6 @@
 import { allChapters, EditableLessonContent, mergeEditableLessonContent, searchCourse } from "@shared/courseCatalog";
 import { z } from "zod";
-import { deleteLessonContentOverride, getChapterProgressForUser, getLessonContentOverrides, setChapterProgress, upsertLessonContentOverride } from "./db";
+import { deleteLessonContentOverride, getCertificateForUser, getChapterProgressForUser, getCompletionSummary, getLessonContentOverrides, issueCertificateForUser, setChapterProgress, upsertLessonContentOverride } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { authenticateLocalAccount, clearLocalSessionCookie, createLocalAccount, createLocalSession, deleteLocalSession, readLocalSessionToken, setLocalSessionCookie } from "./localAuth";
 import { systemRouter } from "./_core/systemRouter";
@@ -79,26 +79,41 @@ export const appRouter = router({
   progress: router({
     list: protectedProcedure.query(({ ctx }) => getChapterProgressForUser(ctx.user.id)),
     setCompleted: protectedProcedure
-      .input(z.object({ chapterId: z.number().int().min(1).max(20), completed: z.boolean() }))
+      .input(z.object({ chapterId: z.number().int().min(1).max(allChapters.length), completed: z.boolean() }))
       .mutation(({ ctx, input }) => setChapterProgress(ctx.user.id, input.chapterId, input.completed)),
+  }),
+  certificate: router({
+    status: protectedProcedure.query(async ({ ctx }) => {
+      const [summary, certificate] = await Promise.all([
+        getCompletionSummary(ctx.user.id, allChapters.length),
+        getCertificateForUser(ctx.user.id),
+      ]);
+      return { ...summary, certificate };
+    }),
+    issue: protectedProcedure.mutation(({ ctx }) => issueCertificateForUser({
+      userId: ctx.user.id,
+      recipientName: ctx.user.name?.trim() || ctx.user.email || "သင်ယူသူ",
+      totalChapters: allChapters.length,
+      courseVersion: "Dart & Flutter Masterclass · 56 chapters",
+    })),
   }),
   cms: router({
     catalog: adminProcedure.query(() => getMergedCatalog()),
     lesson: adminProcedure
-      .input(z.object({ chapterId: z.number().int().min(1).max(20) }))
+      .input(z.object({ chapterId: z.number().int().min(1).max(allChapters.length) }))
       .query(async ({ input }) => {
         const chapter = (await getMergedCatalog()).find((item) => item.id === input.chapterId);
         if (!chapter) throw new Error("Lesson was not found");
         return chapter;
       }),
     saveLesson: adminProcedure
-      .input(z.object({ chapterId: z.number().int().min(1).max(20), content: editableLessonContentSchema }))
+      .input(z.object({ chapterId: z.number().int().min(1).max(allChapters.length), content: editableLessonContentSchema }))
       .mutation(async ({ ctx, input }) => {
         if (!allChapters.some((chapter) => chapter.id === input.chapterId)) throw new Error("Lesson was not found");
         return upsertLessonContentOverride(input.chapterId, JSON.stringify(input.content), ctx.user.id);
       }),
     resetLesson: adminProcedure
-      .input(z.object({ chapterId: z.number().int().min(1).max(20) }))
+      .input(z.object({ chapterId: z.number().int().min(1).max(allChapters.length) }))
       .mutation(({ input }) => deleteLessonContentOverride(input.chapterId)),
   }),
 });

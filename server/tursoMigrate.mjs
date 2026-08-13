@@ -46,6 +46,17 @@ const schemaStatements = [
     createdAt INTEGER NOT NULL,
     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
   )`,
+  `CREATE TABLE IF NOT EXISTS certificates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    certificateCode TEXT NOT NULL UNIQUE,
+    userId INTEGER NOT NULL UNIQUE,
+    recipientName TEXT NOT NULL,
+    courseVersion TEXT NOT NULL,
+    completedChapters INTEGER NOT NULL,
+    totalChapters INTEGER NOT NULL,
+    issuedAt INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+  )`,
 ];
 
 const client = createClient({ url, authToken });
@@ -57,4 +68,4 @@ if (!columns.rows.some((column) => String(column.name) === "passwordHash")) {
 }
 await client.execute("CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique ON users(email) WHERE email IS NOT NULL");
 
-console.log("Turso schema is ready: users, chapterProgress, lessonContent.");
+console.log("Turso schema is ready: users, chapterProgress, lessonContent, certificates.");

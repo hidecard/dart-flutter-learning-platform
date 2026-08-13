@@ -2,12 +2,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./_core/context";
 
 const dbMocks = vi.hoisted(() => ({
+  getCertificateForUser: vi.fn(),
   getChapterProgressForUser: vi.fn(),
+  getCompletionSummary: vi.fn(),
   setChapterProgress: vi.fn(),
+  issueCertificateForUser: vi.fn(),
 }));
 
 vi.mock("./db", () => ({
+  getCertificateForUser: dbMocks.getCertificateForUser,
   getChapterProgressForUser: dbMocks.getChapterProgressForUser,
+  getCompletionSummary: dbMocks.getCompletionSummary,
+  issueCertificateForUser: dbMocks.issueCertificateForUser,
   setChapterProgress: dbMocks.setChapterProgress,
 }));
 
@@ -50,5 +56,32 @@ describe("progress router", () => {
 
     await expect(caller.progress.setCompleted({ chapterId: 5, completed: true })).resolves.toEqual({ chapterId: 5, completed: true });
     expect(dbMocks.setChapterProgress).toHaveBeenCalledWith(42, 5, true);
+  });
+
+  it("returns the authenticated learner's certificate eligibility and issued record", async () => {
+    dbMocks.getCompletionSummary.mockResolvedValue({ completedChapters: 56, totalChapters: 56, percentage: 100, eligible: true });
+    dbMocks.getCertificateForUser.mockResolvedValue({ certificateCode: "DFM-ABC123", recipientName: "သင်ယူသူ" });
+    const caller = appRouter.createCaller(contextWithUser());
+
+    await expect(caller.certificate.status()).resolves.toMatchObject({
+      completedChapters: 56,
+      eligible: true,
+      certificate: { certificateCode: "DFM-ABC123" },
+    });
+    expect(dbMocks.getCompletionSummary).toHaveBeenCalledWith(42, 56);
+    expect(dbMocks.getCertificateForUser).toHaveBeenCalledWith(42);
+  });
+
+  it("issues a certificate only in the authenticated learner's identity", async () => {
+    dbMocks.issueCertificateForUser.mockResolvedValue({ certificateCode: "DFM-ABC123", recipientName: "သင်ယူသူ" });
+    const caller = appRouter.createCaller(contextWithUser());
+
+    await expect(caller.certificate.issue()).resolves.toMatchObject({ certificateCode: "DFM-ABC123" });
+    expect(dbMocks.issueCertificateForUser).toHaveBeenCalledWith({
+      userId: 42,
+      recipientName: "သင်ယူသူ",
+      totalChapters: 56,
+      courseVersion: "Dart & Flutter Masterclass · 56 chapters",
+    });
   });
 });

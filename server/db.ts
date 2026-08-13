@@ -1,4 +1,5 @@
 import { createClient, type Client, type InValue, type Row } from "@libsql/client";
+import { randomUUID } from "node:crypto";
 import { ENV } from "./_core/env";
 
 type UserRole = "admin" | "user";
@@ -40,6 +41,17 @@ type LessonOverrideRecord = {
   updatedAt: Date;
 };
 
+export type CertificateRecord = {
+  id: number;
+  certificateCode: string;
+  userId: number;
+  recipientName: string;
+  courseVersion: string;
+  completedChapters: number;
+  totalChapters: number;
+  issuedAt: Date;
+};
+
 const schemaStatements = [
   `CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -77,6 +89,17 @@ const schemaStatements = [
     userId INTEGER NOT NULL,
     expiresAt INTEGER NOT NULL,
     createdAt INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+  )`,
+  `CREATE TABLE IF NOT EXISTS certificates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    certificateCode TEXT NOT NULL UNIQUE,
+    userId INTEGER NOT NULL UNIQUE,
+    recipientName TEXT NOT NULL,
+    courseVersion TEXT NOT NULL,
+    completedChapters INTEGER NOT NULL,
+    totalChapters INTEGER NOT NULL,
+    issuedAt INTEGER NOT NULL,
     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
   )`,
 ];
@@ -128,6 +151,19 @@ function mapLessonOverride(row: Row): LessonOverrideRecord {
     contentJson: String(row.contentJson),
     updatedByUserId: numberValue(row.updatedByUserId),
     updatedAt: dateValue(row.updatedAt),
+  };
+}
+
+function mapCertificate(row: Row): CertificateRecord {
+  return {
+    id: numberValue(row.id),
+    certificateCode: String(row.certificateCode),
+    userId: numberValue(row.userId),
+    recipientName: String(row.recipientName),
+    courseVersion: String(row.courseVersion),
+    completedChapters: numberValue(row.completedChapters),
+    totalChapters: numberValue(row.totalChapters),
+    issuedAt: dateValue(row.issuedAt),
   };
 }
 
@@ -216,6 +252,52 @@ export async function setChapterProgress(userId: number, chapterId: number, comp
   });
   const result = await database.execute({ sql: "SELECT * FROM chapterProgress WHERE userId = ? AND chapterId = ? LIMIT 1", args: [userId, chapterId] });
   return result.rows[0] ? mapProgress(result.rows[0]) : undefined;
+}
+
+export async function getCompletionSummary(userId: number, totalChapters: number) {
+  const database = await getDb();
+  const result = await database.execute({
+    sql: "SELECT COUNT(DISTINCT chapterId) AS completedChapters FROM chapterProgress WHERE userId = ? AND completed = 1",
+    args: [userId],
+  });
+  const completedChapters = numberValue(result.rows[0]?.completedChapters);
+  return {
+    completedChapters,
+    totalChapters,
+    percentage: totalChapters === 0 ? 0 : Math.round((completedChapters / totalChapters) * 100),
+    eligible: completedChapters >= totalChapters,
+  };
+}
+
+export async function getCertificateForUser(userId: number): Promise<CertificateRecord | undefined> {
+  const database = await getDb();
+  const result = await database.execute({ sql: "SELECT * FROM certificates WHERE userId = ? LIMIT 1", args: [userId] });
+  return result.rows[0] ? mapCertificate(result.rows[0]) : undefined;
+}
+
+export async function issueCertificateForUser(input: {
+  userId: number;
+  recipientName: string;
+  totalChapters: number;
+  courseVersion: string;
+}): Promise<CertificateRecord> {
+  const existing = await getCertificateForUser(input.userId);
+  if (existing) return existing;
+
+  const summary = await getCompletionSummary(input.userId, input.totalChapters);
+  if (!summary.eligible) throw new Error("All chapters must be completed before a certificate can be issued");
+
+  const database = await getDb();
+  const now = Date.now();
+  const certificateCode = `DFM-${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+  await database.execute({
+    sql: `INSERT INTO certificates (certificateCode, userId, recipientName, courseVersion, completedChapters, totalChapters, issuedAt)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    args: [certificateCode, input.userId, input.recipientName, input.courseVersion, summary.completedChapters, input.totalChapters, now],
+  });
+  const created = await getCertificateForUser(input.userId);
+  if (!created) throw new Error("Certificate could not be created");
+  return created;
 }
 
 export async function getLessonContentOverrides(): Promise<LessonOverrideRecord[]> {

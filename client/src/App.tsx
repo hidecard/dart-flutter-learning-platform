@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import AdminCms from "./pages/AdminCms";
+import Certificate from "./pages/Certificate";
 import DartPlayground from "./pages/DartPlayground";
 import Glossary from "./pages/Glossary";
 import Home from "./pages/Home";
@@ -16,6 +17,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/admin"} component={AdminCms} />
+      <Route path={"/certificate"} component={Certificate} />
       <Route path={"/playground"} component={DartPlayground} />
       <Route path={"/signin"} component={SignIn} />
       <Route path={"/glossary"} component={Glossary} />
