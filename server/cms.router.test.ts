@@ -42,7 +42,7 @@ describe("CMS router", () => {
     const caller = appRouter.createCaller(contextFor("admin"));
     const catalog = await caller.cms.catalog();
 
-    expect(catalog).toHaveLength(20);
+    expect(catalog).toHaveLength(allChapters.length);
     expect(catalog[0]?.title).toBe(allChapters[0]?.title);
   });
 

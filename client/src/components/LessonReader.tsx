@@ -71,6 +71,15 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
       </div>
 
       <div className="lesson-prose mt-10 space-y-10">
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="guided-steps-heading">
+          <div className="border-b border-slate-200 bg-slate-950 px-5 py-5 text-white sm:px-6">
+            <p className="text-xs font-bold tracking-[0.15em] text-teal-300">STEP-BY-STEP LESSON</p>
+            <h2 id="guided-steps-heading" className="mt-1 !mb-0 !text-xl !text-white">W3 ပုံစံဖြင့် အဆင့်လိုက်သွားမယ်</h2>
+            <p className="mt-2 !text-sm !leading-6 !text-slate-200">Step တစ်ခုစီပြီးမှ နောက်တစ်ဆင့်သို့သွားပါ။ Code ကိုကိုယ်တိုင်ပြင်ပြီး result ကြည့်ခြင်းက အလွတ်ဖတ်ခြင်းထက်ပိုမှတ်မိစေပါသည်။</p>
+          </div>
+          <ol className="divide-y divide-slate-100">{chapter.guidedSteps.map((step, index) => <li key={`${step.label}-${step.title}`} className="grid gap-3 px-5 py-5 sm:grid-cols-[110px_1fr] sm:px-6"><div><span className="inline-flex rounded-md bg-teal-50 px-2.5 py-1 text-xs font-extrabold text-teal-800">{step.label}</span><p className="mt-2 text-sm font-extrabold text-slate-900">{step.title}</p></div><div><p className="text-sm leading-7 text-slate-700">{step.instruction}</p><p className="mt-3 flex gap-2 rounded-lg bg-slate-50 p-3 text-sm leading-6 text-slate-600"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-700" /><span><strong className="text-slate-800">မျှော်လင့်ရလဒ် — </strong>{step.expected}</span></p></div></li>)}</ol>
+        </section>
+
         {chapter.sections.map((section) => (
           <section key={section.heading}>
             <h2>{section.heading}</h2>
