@@ -3,11 +3,6 @@ import { createServer } from "http";
 import net from "net";
 import { createApp } from "./app";
 
-type AppOptions = {
-  development?: boolean;
-  serveClient?: boolean;
-};
-
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -27,25 +22,21 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
-async function configureApp(options: AppOptions = {}) {
+async function startServer() {
   const app = await createApp();
-  const development = options.development ?? process.env.NODE_ENV === "development";
-  // development mode uses Vite, production mode uses static files
+  const server = createServer(app);
+  const development = process.env.NODE_ENV === "development";
+
+  // Vite must receive the exact server that is later bound to the preview port.
+  // Creating a second unbound server prevents WebSocket upgrade requests from
+  // reaching Vite's HMR handler through the managed preview proxy.
   if (development) {
     const { setupVite } = await import("./vite");
-    const server = createServer(app);
     await setupVite(app, server);
-  } else if (options.serveClient ?? true) {
+  } else {
     const { serveStatic } = await import("./vite");
     serveStatic(app);
   }
-
-  return app;
-}
-
-async function startServer() {
-  const app = await configureApp({ development: process.env.NODE_ENV === "development" });
-  const server = createServer(app);
 
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
