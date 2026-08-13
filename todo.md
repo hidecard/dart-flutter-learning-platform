@@ -25,4 +25,5 @@
 - [x] Run the one-time safe import of existing managed-database users, progress, and CMS content into Turso.
 - [x] Verify remote Turso table availability and imported user/progress row counts.
 - [x] Rewire database helpers and tests to use the Turso-compatible data access layer.
-- [ ] Verify the Turso-backed platform and create a private GitHub repository with the complete source code.
+- [x] Verify the Turso-backed platform and create a private GitHub repository with the complete source code.
+- [x] Verify reversible authenticated progress and CMS write/read flows against Turso, then restore the original records.

@@ -12,7 +12,8 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "db:turso:migrate": "node server/tursoMigrate.mjs",
-    "db:turso:import-legacy": "node server/importLegacyMysqlToTurso.mjs"
+    "db:turso:import-legacy": "node server/importLegacyMysqlToTurso.mjs",
+    "db:turso:verify-writes": "node server/verifyTursoWrites.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
