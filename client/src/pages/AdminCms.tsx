@@ -1,6 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout, { type DashboardMenuItem } from "@/components/DashboardLayout";
-import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { toEditableLessonContent, type EditableLessonContent } from "@shared/courseCatalog";
 import { AlertTriangle, ArrowLeft, BookOpenCheck, ClipboardPenLine, Eye, FileText, GraduationCap, Plus, RotateCcw, Save, Search, ShieldCheck, Trash2 } from "lucide-react";
@@ -80,7 +79,7 @@ export default function AdminCms() {
 
   if (loading) return <div className="min-h-screen bg-slate-50" />;
   if (!isAuthenticated) {
-    return <AccessNotice title="CMS ကိုအသုံးပြုရန် ဝင်ရောက်ပါ" text="သင်ခန်းစာစာသားကိုပြင်ဆင်ရန် စီမံခန့်ခွဲသူ account ဖြင့်ဝင်ရောက်ထားရန်လိုပါသည်။" action="ဝင်ရောက်မည်" onAction={startLogin} />;
+    return <AccessNotice title="CMS ကိုအသုံးပြုရန် ဝင်ရောက်ပါ" text="သင်ခန်းစာစာသားကိုပြင်ဆင်ရန် စီမံခန့်ခွဲသူ local account ဖြင့်ဝင်ရောက်ထားရန်လိုပါသည်။" action="ဝင်ရောက်မည်" href="/signin?redirect=/admin" />;
   }
   if (!isAdmin) {
     return <AccessNotice title="CMS အသုံးပြုခွင့်မရှိပါ" text="ဒီနေရာသည် administrator များအတွက်သာဖြစ်သည်။ စာဖတ်သူမြင်ကွင်းသို့ပြန်သွားပြီး သင်ခန်းစာများကိုဆက်လက်လေ့လာနိုင်ပါသည်။" action="စာဖတ်သူမြင်ကွင်းသို့ပြန်မည်" href="/" />;

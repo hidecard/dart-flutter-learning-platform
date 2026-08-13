@@ -1,8 +1,8 @@
-import { COOKIE_NAME } from "@shared/const";
 import { allChapters, EditableLessonContent, mergeEditableLessonContent, searchCourse } from "@shared/courseCatalog";
 import { z } from "zod";
 import { deleteLessonContentOverride, getChapterProgressForUser, getLessonContentOverrides, setChapterProgress, upsertLessonContentOverride } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
+import { authenticateLocalAccount, clearLocalSessionCookie, createLocalAccount, createLocalSession, deleteLocalSession, readLocalSessionToken, setLocalSessionCookie } from "./localAuth";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 
@@ -46,9 +46,25 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+    signUp: publicProcedure
+      .input(z.object({ name: z.string().trim().min(2).max(100).optional(), email: z.string().trim().email().max(320), password: z.string().min(10).max(128) }))
+      .mutation(async ({ ctx, input }) => {
+        const user = await createLocalAccount(input);
+        const token = await createLocalSession(user.id);
+        setLocalSessionCookie(ctx.res, ctx.req, token);
+        return user;
+      }),
+    signIn: publicProcedure
+      .input(z.object({ email: z.string().trim().email().max(320), password: z.string().min(1).max(128) }))
+      .mutation(async ({ ctx, input }) => {
+        const user = await authenticateLocalAccount(input.email, input.password);
+        const token = await createLocalSession(user.id);
+        setLocalSessionCookie(ctx.res, ctx.req, token);
+        return user;
+      }),
+    logout: publicProcedure.mutation(async ({ ctx }) => {
+      await deleteLocalSession(readLocalSessionToken(ctx.req));
+      clearLocalSessionCookie(ctx.res, ctx.req);
       return {
         success: true,
       } as const;

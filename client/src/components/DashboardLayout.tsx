@@ -19,11 +19,10 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { LayoutDashboard, LogOut, PanelLeft, type LucideIcon } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
@@ -66,19 +65,16 @@ export default function DashboardLayout({
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-center">
-              Sign in to continue
-            </h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-center">CMS ကိုအသုံးပြုရန် ဝင်ရောက်ပါ</h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+              အီးမေးလ်နှင့်စကားဝှက်ဖြင့် local account ဝင်ရောက်ပြီးမှ dashboard ကိုအသုံးပြုနိုင်ပါသည်။
             </p>
           </div>
-          <Button
-            onClick={() => startLogin()}
+          <Button asChild
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all"
           >
-            Sign in
+            <Link href="/signin?redirect=/admin">ဝင်ရောက်မည်</Link>
           </Button>
         </div>
       </div>

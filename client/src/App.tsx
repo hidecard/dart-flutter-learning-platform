@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import AdminCms from "./pages/AdminCms";
 import Glossary from "./pages/Glossary";
 import Home from "./pages/Home";
+import SignIn from "./pages/SignIn";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -14,6 +15,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/admin"} component={AdminCms} />
+      <Route path={"/signin"} component={SignIn} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

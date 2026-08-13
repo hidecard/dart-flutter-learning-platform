@@ -27,3 +27,17 @@
 - [x] Rewire database helpers and tests to use the Turso-compatible data access layer.
 - [x] Verify the Turso-backed platform and create a private GitHub repository with the complete source code.
 - [x] Verify reversible authenticated progress and CMS write/read flows against Turso, then restore the original records.
+- [x] Review the current Manus OAuth dependencies and define a Turso-only local account security model.
+- [x] Add Turso tables and secure server-side password hash/session storage for local accounts.
+- [x] Test Turso-backed password hashing, local sign-in, opaque sessions, and session revocation.
+- [x] Replace Manus login UI and API dependencies with local sign-up, sign-in, logout, and session handling.
+- [x] Replace Manus login UI and API dependencies with local sign-up, sign-in, logout, and session handling.
+- [x] Preserve admin-only CMS access and authenticated progress persistence under local Turso accounts.
+- [x] Verify local authentication, Turso persistence, and account authorization with tests and responsive UI review.
+- [x] Run real local-account router integration coverage for sign-up, session cookie, progress, admin CMS, and logout.
+- [x] Add and validate a Vercel-compatible serverless entrypoint and production build configuration.
+- [x] Package the production source tree and deploy the public learning platform to Vercel.
+- [x] Resolve the failed Vercel dependency-installation attempt and verify a successful production deployment.
+- [x] Prevent the Vercel serverless handler from loading the development-only Vite module at startup, then verify the live tRPC API.
+- [x] Bundle the Vercel serverless handler so all local server imports resolve at runtime, then verify the live tRPC API.
+- [x] Confirm and complete the GitHub public-visibility change and Vercel deployment.
