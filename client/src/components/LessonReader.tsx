@@ -1,5 +1,6 @@
 import type { Chapter, CoursePart } from "@shared/courseCatalog";
 import { lessonPlaygroundHref } from "@shared/playground";
+import { pdfTopicsForChapter } from "@shared/flutterPdfCoverage";
 import { BookOpen, Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, ListOrdered, PlayCircle, Target, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
@@ -45,6 +46,7 @@ function HighlightedCode({ code }: { code: string }) {
 export function LessonReader({ chapter, part, completed, onToggleCompletion, isSaving, isAuthenticated }: LessonReaderProps) {
   const [copied, setCopied] = useState(false);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
+  const pdfTopics = pdfTopicsForChapter(chapter.id);
 
   async function copyCode() {
     await navigator.clipboard.writeText(chapter.code.code);
@@ -79,6 +81,14 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
             {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>
         ))}
+
+        {pdfTopics.length > 0 && (
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="pdf-source-heading">
+            <div className="flex items-center gap-2 text-slate-950"><BookOpen className="h-5 w-5 text-teal-700" /><h2 id="pdf-source-heading" className="!mb-0 !text-xl">ပေးထားသော Flutter စာအုပ်နှင့် ဆက်စပ်သည့်အကြောင်းအရာ</h2></div>
+            <p className="mt-3 text-sm leading-7 text-slate-600">ဒီအခန်းသည် ပေးထားသော PDF ၏ topic အစဉ်နှင့် ဆက်စပ်ပါသည်။ အောက်ပါအကြောင်းအရာများကို မူရင်းစာသားမကူးယူဘဲ မြန်မာဘာသာ၊ code အလုပ်လုပ်ပုံနှင့် လက်တွေ့ project အမြင်ဖြင့် ပြန်လည်ရေးသားထားပါသည်။</p>
+            <div className="mt-4 flex flex-wrap gap-2">{pdfTopics.map((topic) => <span key={topic} className="rounded-lg bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-800">{topic}</span>)}</div>
+          </section>
+        )}
 
         {chapter.topicExplanations.length > 0 && (
           <section className="rounded-2xl border border-cyan-100 bg-cyan-50/60 p-5 sm:p-6" aria-labelledby="topic-explanations-heading">

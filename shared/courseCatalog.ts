@@ -1,5 +1,6 @@
 import { fallbackStudyGuide, lessonStudyGuides, type StudyGuide } from "./lessonStudyGuides";
 import { topicExplanationsForChapter, type TopicExplanation } from "./topicExplanations";
+import { pdfTopicsForChapter } from "./flutterPdfCoverage";
 
 export type CodeExample = {
   language: string;
@@ -283,6 +284,7 @@ export function searchCourse(query: string, chapters = allChapters) {
       ...chapter.studyGuide.practiceSteps,
       chapter.challenge,
       ...chapter.checklist,
+      ...pdfTopicsForChapter(chapter.id),
     ]
       .join(" ")
       .toLocaleLowerCase();

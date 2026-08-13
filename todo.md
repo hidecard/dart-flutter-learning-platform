@@ -68,3 +68,13 @@
 - [x] Write and integrate detailed Burmese Dart and Flutter topic content.
 - [x] Render topic explanations in the learner reader and preserve playground compatibility.
 - [x] Run tests/build, save checkpoint, push GitHub, deploy Vercel, and verify the update.
+
+### User-provided Flutter-Coding PDF integration
+- [x] Review the 256-page PDF in order and preserve its topic sequence in a source inventory.
+- [x] Compare every PDF chapter/topic with the existing 56-chapter curriculum and identify missing or shallow coverage.
+- [ ] Add original Burmese explanations and code-focused lessons for missing PDF topics without reproducing the book's protected prose verbatim.
+- [x] Integrate the expanded topic inventory with chapter search, reader rendering, CMS-safe content, progress tracking, and playground links.
+- [ ] Validate coverage completeness, tests, build, visual rendering, checkpoint, GitHub sync, and production status.
+
+Source PDF: https://content.gitbook.com/content/egsIWleSdyH9rMLJ8ShI/blobs/xxfDEN1b4KipvOxna4wP/Flutter-Coding.pdf
+Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduction to Mobile App Development" by Edward Thornton; 256 pages; 2021.

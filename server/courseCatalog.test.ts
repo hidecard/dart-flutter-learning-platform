@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { allChapters, courseParts, searchCourse } from "../shared/courseCatalog";
+import { flutterPdfCoverage, flutterPdfTopicCount } from "../shared/flutterPdfCoverage";
 
 describe("course catalog", () => {
   it("contains the detailed curriculum and the advanced Flutter platform coverage", () => {
@@ -16,6 +17,9 @@ describe("course catalog", () => {
     expect(searchCourse("MethodChannel").map((chapter) => chapter.id)).toContain(39);
     expect(searchCourse("Deep Link").map((chapter) => chapter.id)).toContain(47);
     expect(searchCourse("FFI").map((chapter) => chapter.id)).toContain(53);
+    expect(searchCourse("Song Player").map((chapter) => chapter.id)).toContain(15);
+    expect(searchCourse("Flutter Development Environment").map((chapter) => chapter.id)).toContain(21);
+    expect(searchCourse("Query parameters").map((chapter) => chapter.id)).toContain(13);
   });
 
   it("exposes topic-level explanations for Dart declarations and Flutter widgets", () => {
@@ -31,6 +35,17 @@ describe("course catalog", () => {
 
     for (const chapter of allChapters) {
       expect(chapter.topicExplanations.every((topic) => Boolean(topic) && typeof topic.name === "string")).toBe(true);
+    }
+  });
+
+  it("covers the provided PDF in order without undefined mappings", () => {
+    expect(flutterPdfCoverage).toHaveLength(16);
+    expect(flutterPdfCoverage.map((entry) => entry.order)).toEqual(Array.from({ length: 16 }, (_, index) => index + 1));
+    expect(flutterPdfTopicCount).toBeGreaterThanOrEqual(50);
+    for (const entry of flutterPdfCoverage) {
+      expect(entry.sourceTopics.length).toBeGreaterThan(0);
+      expect(entry.originalCoverage.length).toBeGreaterThan(40);
+      expect(entry.mappedChapterIds.every((id) => allChapters.some((chapter) => chapter.id === id))).toBe(true);
     }
   });
 
