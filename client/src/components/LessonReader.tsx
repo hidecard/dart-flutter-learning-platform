@@ -1,5 +1,5 @@
 import type { Chapter, CoursePart } from "@shared/courseCatalog";
-import { Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, PlayCircle } from "lucide-react";
+import { Check, CheckCircle2, Clipboard, ClipboardCheck, Lightbulb, ListChecks, ListOrdered, PlayCircle, Target, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 type LessonReaderProps = {
@@ -78,6 +78,12 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
           </section>
         ))}
 
+        <section className="rounded-2xl border border-sky-100 bg-sky-50/70 p-5 sm:p-6" aria-labelledby="goals-heading">
+          <div className="flex items-center gap-2 text-sky-950"><Target className="h-5 w-5" /><h2 id="goals-heading" className="!mb-0 !text-xl">ဒီအခန်းပြီးလျှင် လုပ်နိုင်ရမည့်အရာများ</h2></div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">အောက်ပါအချက်များကို မိမိစကားဖြင့်ရှင်းပြနိုင်ပြီး code ထဲတွင်အသုံးချနိုင်လျှင် အခန်း၏အခြေခံကိုပိုင်နိုင်ပါပြီ။</p>
+          <ul className="mt-4 space-y-3">{chapter.studyGuide.objectives.map((goal) => <li key={goal} className="flex gap-3 rounded-xl bg-white/90 p-3 text-sm leading-6 text-slate-700 ring-1 ring-sky-100"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-sky-700" /><span>{goal}</span></li>)}</ul>
+        </section>
+
         <section aria-labelledby="code-example-heading">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
@@ -113,12 +119,28 @@ export function LessonReader({ chapter, part, completed, onToggleCompletion, isS
           </div>
         </section>
 
+        <section className="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5 sm:p-6" aria-labelledby="walkthrough-heading">
+          <div className="flex items-center gap-2 text-indigo-950"><ListOrdered className="h-5 w-5" /><h2 id="walkthrough-heading" className="!mb-0 !text-xl">Code ကိုတစ်ဆင့်ချင်းဖတ်မယ်</h2></div>
+          <ol className="mt-4 space-y-3">{chapter.studyGuide.codeWalkthrough.map((step, index) => <li key={step} className="flex gap-3 rounded-xl bg-white/90 p-4 text-sm leading-6 text-slate-700 ring-1 ring-indigo-100"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-700 text-xs font-extrabold text-white">{index + 1}</span><span>{step}</span></li>)}</ol>
+        </section>
+
+        <section className="rounded-2xl border border-rose-100 bg-rose-50/70 p-5 sm:p-6" aria-labelledby="mistakes-heading">
+          <div className="flex items-center gap-2 text-rose-950"><TriangleAlert className="h-5 w-5" /><h2 id="mistakes-heading" className="!mb-0 !text-xl">စတင်သူများ မကြာခဏကြုံရသောအမှားများ</h2></div>
+          <div className="mt-4 space-y-3">{chapter.studyGuide.commonMistakes.map((item) => <div key={item.mistake} className="rounded-xl bg-white/90 p-4 ring-1 ring-rose-100"><p className="text-sm font-bold leading-6 text-rose-900">သတိထားရန် — {item.mistake}</p><p className="mt-2 text-sm leading-6 text-slate-600"><strong className="text-slate-800">ပြင်ဆင်နည်း — </strong>{item.fix}</p></div>)}</div>
+        </section>
+
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6" aria-labelledby="challenge-heading">
           <div className="flex items-center gap-2 text-amber-900">
             <PlayCircle className="h-5 w-5" />
             <h2 id="challenge-heading" className="!mb-0 !text-xl">လက်တွေ့စိန်ခေါ်မှု</h2>
           </div>
           <p className="mt-4 text-base leading-7 text-amber-950">{chapter.challenge}</p>
+        </section>
+
+        <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-5 sm:p-6" aria-labelledby="practice-heading">
+          <div className="flex items-center gap-2 text-violet-950"><PlayCircle className="h-5 w-5" /><h2 id="practice-heading" className="!mb-0 !text-xl">လက်တွေ့လေ့ကျင့်မှု အဆင့်လိုက်</h2></div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Challenge ကိုတစ်ခါတည်းမဖြေဘဲ အောက်ပါအစဉ်အတိုင်းလုပ်ဆောင်ပါက concept ကိုပိုမှတ်မိပါမည်။</p>
+          <ol className="mt-4 space-y-3">{chapter.studyGuide.practiceSteps.map((step, index) => <li key={step} className="flex gap-3 rounded-xl bg-white/90 p-4 text-sm leading-6 text-slate-700 ring-1 ring-violet-100"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-700 text-xs font-extrabold text-white">{index + 1}</span><span>{step}</span></li>)}</ol>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="self-check-heading">

@@ -1,3 +1,5 @@
+import { fallbackStudyGuide, lessonStudyGuides, type StudyGuide } from "./lessonStudyGuides";
+
 export type CodeExample = {
   language: string;
   code: string;
@@ -19,6 +21,7 @@ export type Chapter = {
   topics: string[];
   sections: LessonSection[];
   code: CodeExample;
+  studyGuide: StudyGuide;
   challenge: string;
   checklist: string[];
 };
@@ -75,6 +78,7 @@ const lesson = (
     },
   ],
   code: { language: "dart", code, annotations },
+  studyGuide: lessonStudyGuides[id] ?? fallbackStudyGuide,
   challenge,
   checklist,
 });
@@ -194,6 +198,10 @@ export function searchCourse(query: string, chapters = allChapters) {
       ...chapter.sections.flatMap((section) => [section.heading, ...section.paragraphs]),
       chapter.code.code,
       ...chapter.code.annotations.flatMap((annotation) => [annotation.label, annotation.detail]),
+      ...chapter.studyGuide.objectives,
+      ...chapter.studyGuide.codeWalkthrough,
+      ...chapter.studyGuide.commonMistakes.flatMap((item) => [item.mistake, item.fix]),
+      ...chapter.studyGuide.practiceSteps,
       chapter.challenge,
       ...chapter.checklist,
     ]

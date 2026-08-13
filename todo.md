@@ -43,3 +43,4 @@
 - [x] Confirm and complete the GitHub public-visibility change and Vercel deployment.
 - [x] Fix the managed-preview Vite HMR WebSocket connection failure without affecting the Vercel production deployment.
 - [x] Commit and push the verified Vercel deployment and managed-preview WebSocket fixes to the public GitHub repository.
+- [x] Expand all Dart and Flutter lessons with deeper beginner-friendly explanations, code walkthroughs, practical examples, common mistakes, and structured practice.
