@@ -52,7 +52,8 @@ describe("course catalog", () => {
 
   it("documents explicit missing or shallow PDF topics for follow-up expansion", () => {
     expect(flutterPdfGapAnalysis.length).toBeGreaterThanOrEqual(10);
-    expect(pdfMissingOrShallowTopicCount).toBeGreaterThanOrEqual(30);
+    expect(pdfMissingOrShallowTopicCount).toBe(0);
+    expect(flutterPdfGapAnalysis.every((gap) => gap.gapLevel === "covered")).toBe(true);
     expect(flutterPdfGapAnalysis.every((gap) => gap.plannedChapterIds.length > 0 && gap.BurmesePlan.length > 30)).toBe(true);
   });
 

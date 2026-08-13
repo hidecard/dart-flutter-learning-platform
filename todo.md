@@ -72,7 +72,7 @@
 ### User-provided Flutter-Coding PDF integration
 - [x] Review the 256-page PDF in order and preserve its topic sequence in a source inventory.
 - [x] Compare every PDF chapter/topic with the existing 56-chapter curriculum and identify missing or shallow coverage.
-- [ ] Add original Burmese explanations and code-focused lessons for missing PDF topics without reproducing the book's protected prose verbatim.
+- [x] Add original Burmese explanations and code-focused lessons for missing PDF topics without reproducing the book's protected prose verbatim.
 - [x] Integrate the expanded topic inventory with chapter search, reader rendering, CMS-safe content, progress tracking, and playground links.
 - [ ] Validate coverage completeness, tests, build, visual rendering, checkpoint, GitHub sync, and production status.
 

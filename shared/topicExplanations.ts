@@ -197,6 +197,78 @@ const pdfProjectTopics: TopicExplanation[] = [
     lineByLine: ["items သည် widget ထံရောက်လာသော input list ဖြစ်သည်။", "assert က developer contract ကိုစစ်သည်။", "map(Text.new) က item တစ်ခုချင်းကို Text widget အဖြစ်ပြောင်းသည်။", "Empty state လိုအပ်သော screen များတွင် assertion အစား UI empty state ကိုပြပါ။"],
     mistakes: [{ mistake: "assert ကို security validation အဖြစ်သုံးခြင်း", fix: "server validation, permission check နှင့် user-facing validation ကို သီးခြားလုပ်ပါ။" }, { mistake: "production တွင် assertion အမြဲ run မည်ဟုယူဆခြင်း", fix: "release behavior အတွက်လည်း သင့်တော်သော error handling ထည့်ပါ။" }],
     practicalUse: "Widget contract, model invariant, debugging workflow နှင့် regression စမ်းသပ်မှုများတွင် assertion သုံးပါ။"
+  },
+  {
+    name: "Flutter Doctor — development environment ကို အထောက်အထားဖြင့်စစ်ခြင်း",
+    category: "Flutter",
+    purpose: "Flutter SDK တင်ပြီးသည်ဟုထင်ရုံနှင့် project မ run နိုင်သေးပါ။ flutter doctor သည် SDK, Android toolchain, connected device နှင့် editor integration တို့၏အခြေအနေကို စုစည်းပြသသော diagnostic command ဖြစ်သည်။",
+    syntax: "flutter doctor -v\nflutter devices\nflutter run",
+    howItWorks: "Doctor output ထဲရှိ check mark, warning နှင့် error ကို အုပ်စုခွဲဖတ်ရပါသည်။ Warning အားလုံးကို အတင်းဖျောက်ရန်မဟုတ်ဘဲ ကိုယ်တည်ဆောက်မည့် platform အတွက်လိုအပ်သော toolchain ကို အရင်ပြင်ရပါသည်။ `-v` သည် version/path အသေးစိတ်ကို ထုတ်ပေးပြီး PATH သို့မဟုတ် license error ရှာရာတွင်အထောက်အကူဖြစ်သည်။",
+    example: "# Terminal\nflutter --version\nflutter doctor -v\nflutter devices\nflutter run",
+    output: "Flutter version, doctor checklist, ရှာတွေ့သော emulator/device နှင့် app run log ကို အဆင့်လိုက်တွေ့ရမည်။",
+    lineByLine: ["flutter --version သည် SDK ကို shell ကတွေ့နိုင်ကြောင်းစစ်သည်။", "doctor -v သည် platform toolchain ၏အသေးစိတ်ကိုပြသည်။", "devices သည် run မည့် target ရှိ/မရှိစစ်သည်။", "run သည်ရွေးထားသော device ပေါ်တွင် app ကိုတည်ဆောက်ပြီးဖွင့်သည်။"],
+    mistakes: [{ mistake: "warning/error စာကိုမဖတ်ဘဲ command ထပ်ခေါ်ခြင်း", fix: "လိုအပ်သော Android SDK, license, PATH သို့မဟုတ် device permission ကို output အတိုင်း ပြင်ပါ။" }],
+    practicalUse: "Team member အသစ် setup, CI runner စစ်ဆေးမှုနှင့် release မတိုင်မီ environment diagnosis တွင်သုံးပါ။"
+  },
+  {
+    name: "Login Form — controller, validator နှင့် submit state",
+    category: "Flutter",
+    purpose: "Login UI သည် input box နှစ်ခုထားခြင်းထက် user input ကိုဖတ်ခြင်း၊ မှားလျှင်ချက်ချင်းပြခြင်း၊ request လုပ်နေချိန် double-submit မဖြစ်စေခြင်းနှင့် success/error ကိုပြခြင်းတို့ပါဝင်သော state flow ဖြစ်သည်။",
+    syntax: "Form(key: formKey, child: TextFormField(validator: validateEmail, onSaved: saveEmail))",
+    howItWorks: "FormState က field validators များကို စုစည်းထားပါသည်။ submit ချိန်တွင် validate() ခေါ်ပြီး false ဖြစ်လျှင် request မပို့ရပါ။ true ဖြစ်မှ controller value ကို trim လုပ်ကာ server သို့ပို့ပြီး submitting state ဖြင့် button ကိုခဏပိတ်ရပါသည်။",
+    example: "final formKey = GlobalKey<FormState>();\nfinal emailController = TextEditingController();\n\nForm(\n  key: formKey,\n  child: TextFormField(\n    controller: emailController,\n    validator: (value) => value == null || !value.contains('@')\n        ? 'Email မှန်ကန်စွာထည့်ပါ'\n        : null,\n  ),\n)",
+    output: "Email မမှန်လျှင် field အောက်တွင် error ပြပြီး valid ဖြစ်မှ login request flow သို့ဆက်သွားမည်။",
+    lineByLine: ["GlobalKey သည် FormState ကိုနောက်မှရယူရန် reference ဖြစ်သည်။", "controller သည် input text ကိုဖတ်ရန်အသုံးပြုသည်။", "validator သည် error message သို့မဟုတ် null ကိုပြန်ပေးသည်။", "server-side validation ကိုလည်း မဖြစ်မနေထပ်လုပ်ရသည်။"],
+    mistakes: [{ mistake: "controller မည်သူ dispose လုပ်မည်မစီစဉ်ခြင်း", fix: "StatefulWidget dispose ထဲတွင် controller.dispose() ခေါ်ပါ။" }, { mistake: "client validator ကို security boundary ထင်ခြင်း", fix: "server တွင် credential, rate limit နှင့် authorization ကိုထပ်စစ်ပါ။" }],
+    practicalUse: "Login, signup, password reset, checkout address နှင့် admin forms များတွင်သုံးပါ။"
+  },
+  {
+    name: "Cart State — product list ကို order တန်ဖိုးအဖြစ်တွက်ခြင်း",
+    category: "Flutter",
+    purpose: "Ecommerce cart သည် UI မှာ item ပြခြင်းတင်မဟုတ်ဘဲ product id, quantity, price နှင့် subtotal ကို တစ်နေရာတည်းတွင် စနစ်တကျထိန်းရန်လိုသော domain state ဖြစ်သည်။",
+    syntax: "final total = items.fold<double>(0, (sum, item) => sum + item.price * item.quantity);",
+    howItWorks: "Cart action တစ်ခုဖြစ်တိုင်း immutable state အသစ်ဖန်တီးပြီး provider/controller မှ UI ကိုအသိပေးရပါသည်။ Total တွက်ရာတွင် server price ကိုယုံကြည်မထားဘဲ checkout ချိန်တွင် server က final amount ပြန်တွက်ရပါသည်။",
+    example: "class CartLine {\n  const CartLine(this.price, this.quantity);\n  final double price;\n  final int quantity;\n}\n\ndouble cartTotal(List<CartLine> lines) =>\n    lines.fold(0, (sum, line) => sum + line.price * line.quantity);",
+    output: "price နှင့် quantity တစ်ကြောင်းချင်းမြှောက်ပြီး cart total တစ်ခုတည်းပြန်ရမည်။",
+    lineByLine: ["CartLine သည် product တစ်ကြောင်း၏ data model ဖြစ်သည်။", "final fields သည် line object ဖန်တီးပြီးနောက် မပြောင်းစေရန်ကာကွယ်သည်။", "fold သည် list အားလုံးကို accumulator တစ်ခုအဖြစ်စုသည်။", "checkout ချိန်တွင် server က stock နှင့် price ကိုပြန်စစ်ရမည်။"],
+    mistakes: [{ mistake: "UI total ကို final payment amount အဖြစ်ယုံကြည်ခြင်း", fix: "client total သည် display အတွက်သာဖြစ်ပြီး server က authoritative total ပြန်တွက်ပါ။" }],
+    practicalUse: "Product catalog, cart drawer, checkout summary နှင့် order history တို့တွင်သုံးပါ။"
+  },
+  {
+    name: "Chat Composer — message state နှင့် realtime update",
+    category: "Flutter",
+    purpose: "Chat screen တွင် message input, send action, optimistic pending state, failure retry နှင့် realtime incoming message တို့ကို မရှုပ်ထွေးအောင် ခွဲစီမံရန်လိုပါသည်။",
+    syntax: "final text = controller.text.trim();\nif (text.isNotEmpty && !isSending) sendMessage(text);",
+    howItWorks: "User က send နှိပ်လျှင် input ကို trim လုပ်၊ pending message ထည့်၊ server request ပို့ပြီး success ဖြစ်လျှင် delivered အဖြစ်ပြောင်းပါသည်။ failure ဖြစ်လျှင် retry action ပြရပါသည်။ Realtime event ရောက်လာသော message ကို လက်ရှိ conversation id နှင့်ကိုက်မှသာ list ထဲထည့်ရပါသည်။",
+    example: "Future<void> submit() async {\n  final text = composer.text.trim();\n  if (text.isEmpty || isSending) return;\n  setState(() => isSending = true);\n  try {\n    await repository.sendMessage(text);\n    composer.clear();\n  } finally {\n    if (mounted) setState(() => isSending = false);\n  }\n}",
+    output: "စာမရှိလျှင် request မပို့၊ request လုပ်နေစဉ် duplicate send မဖြစ်ဘဲ ပြီးလျှင် composer ရှင်းသွားမည်။",
+    lineByLine: ["trim သည် whitespace-only message ကိုဖယ်ရှားသည်။", "isSending သည် duplicate request ကာကွယ်သည်။", "repository က UI မှ network implementation ကိုခွဲပေးသည်။", "mounted စစ်ခြင်းက screen ပျက်ပြီးနောက် setState ခေါ်မိခြင်းကိုရှောင်သည်။"],
+    mistakes: [{ mistake: "realtime message အားလုံးကို လက်ရှိ room ထဲထည့်ခြင်း", fix: "conversation id နှင့် membership/permission ကိုစစ်ပြီးမှ render လုပ်ပါ။" }],
+    practicalUse: "Support chat, group chat, notification inbox နှင့် collaborative comments တွင်သုံးပါ။"
+  },
+  {
+    name: "Responsive Pricing Scroll — card layout နှင့် scroll constraints",
+    category: "Flutter",
+    purpose: "Pricing card များကို screen width မတူသော်လည်း ဖတ်ရလွယ်၊ scroll လုပ်ရလွယ်အောင် row/scroll behavior နှင့် responsive constraints ကို ခွဲစဉ်းစားရပါသည်။",
+    syntax: "SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: cards))",
+    howItWorks: "SingleChildScrollView က parent width ထက်ကျော်သော child ကို scrollable viewport ထဲတွင်ထားပေးသည်။ Card တစ်ခုချင်း၏ width ကို MediaQuery သို့မဟုတ် LayoutBuilder ဖြင့်တွက်ပြီး mobile တွင် horizontal scroll, desktop တွင် grid/row အဖြစ်ပြောင်းနိုင်သည်။",
+    example: "LayoutBuilder(\n  builder: (context, constraints) {\n    final cardWidth = constraints.maxWidth < 700 ? 280.0 : 320.0;\n    return SingleChildScrollView(\n      scrollDirection: Axis.horizontal,\n      child: Row(\n        children: plans.map((plan) => SizedBox(\n          width: cardWidth,\n          child: PricingCard(plan: plan),\n        )).toList(),\n      ),\n    );\n  },\n)",
+    output: "ဖုန်းတွင် card များကို ဘယ်ညာ scroll လုပ်နိုင်ပြီး width ကြီးသော screen တွင် card အရွယ်အစား ပိုသင့်တော်လာမည်။",
+    lineByLine: ["LayoutBuilder သည် parent constraints ကိုဖတ်ပေးသည်။", "cardWidth သည် screen အရွယ်အစားအလိုက်ပြောင်းသည်။", "SingleChildScrollView သည် horizontal overflow ကို user gesture ဖြင့်ဖတ်နိုင်စေသည်။", "PricingCard ကို reusable widget အဖြစ်ခွဲထားခြင်းက data နှင့် layout ကိုသီးခြားစီမံစေသည်။"],
+    mistakes: [{ mistake: "horizontal scroll ထဲတွင် unconstrained width ချန်ထားခြင်း", fix: "card တစ်ခုချင်းကို SizedBox/ConstrainedBox ဖြင့် width သတ်မှတ်ပါ။" }],
+    practicalUse: "Pricing page, feature comparison, onboarding cards နှင့် FlutterFlow မှ code-based responsive UI ပြောင်းရာတွင်သုံးပါ။"
+  },
+  {
+    name: "Release Build — iOS/Android ထုတ်ဝေမှု၏ အဓိကအဆင့်များ",
+    category: "Flutter",
+    purpose: "App ကို run လုပ်နိုင်ခြင်းနှင့် store သို့ publish လုပ်နိုင်ခြင်းသည် မတူပါ။ Release build တွင် app identity, signing, environment config, platform permission, artifact နှင့် store metadata တို့အားလုံးကို စစ်ရပါသည်။",
+    syntax: "flutter build appbundle --release\nflutter build ipa --release",
+    howItWorks: "Release mode သည် debugging အစား optimized artifact ထုတ်ပေးပါသည်။ Android တွင် app bundle/signing, iOS တွင် archive/signing နှင့် provisioning ကို platform rules အတိုင်းပြင်ရသည်။ Secret များကို source code ထဲမထည့်ဘဲ deployment environment မှ inject လုပ်ရပါသည်။",
+    example: "# Android\nflutter clean\nflutter pub get\nflutter test\nflutter build appbundle --release\n\n# iOS (macOS runner)\nflutter build ipa --release",
+    output: "Store တင်နိုင်သော signed Android App Bundle သို့မဟုတ် iOS archive artifact ရမည်။",
+    lineByLine: ["clean သည် stale build output ကိုဖယ်ရှားသည်။", "pub get သည် lockfile အတိုင်း package များပြင်ဆင်သည်။", "test သည် release မတိုင်မီ regression ကိုဖမ်းသည်။", "build command က store-oriented release artifact ထုတ်သည်။"],
+    mistakes: [{ mistake: "debug key နှင့် production secret ကိုရောသုံးခြင်း", fix: "environment ခွဲပြီး signing credential ကို secret manager/CI ထဲတွင်ထားပါ။" }, { mistake: "release build ကို real device မစမ်းခြင်း", fix: "permissions, deep links, notifications နှင့် crash behavior ကို release-like device build ဖြင့်စမ်းပါ။" }],
+    practicalUse: "Store submission, internal beta, staged rollout, rollback နှင့် production monitoring တို့တွင်သုံးပါ။"
   }
 ];
 
@@ -204,15 +276,19 @@ const byChapter: Record<number, TopicExplanation[]> = {
   2: dartDeclarations,
   6: [flutterWidgets[4]],
   7: [flutterWidgets[0], flutterWidgets[1], flutterWidgets[2], flutterWidgets[3]],
-  8: [flutterWidgets[6]],
+  8: [flutterWidgets[6], pdfProjectTopics[5]],
   10: [flutterWidgets[6]],
-  11: [flutterWidgets[5]],
+  11: [flutterWidgets[5], pdfProjectTopics[9]],
   28: [flutterWidgets[6]],
   32: [flutterWidgets[4], flutterWidgets[0]],
   13: [pdfProjectTopics[0]],
   15: [pdfProjectTopics[1]],
   19: [pdfProjectTopics[3]],
   29: [pdfProjectTopics[2]],
+  12: [pdfProjectTopics[7]],
+  20: [pdfProjectTopics[8]],
+  21: [pdfProjectTopics[4]],
+  30: [pdfProjectTopics[6]],
   35: [flutterWidgets[1], flutterWidgets[2], flutterWidgets[3]],
 };
 
