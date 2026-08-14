@@ -1,5 +1,8 @@
+import React from "react";
 import type { CoursePart } from "@shared/courseCatalog";
+import { detailedMicroLessons, microLessonCount } from "@shared/courseCatalog";
 import { BookOpen, CheckCircle2, ChevronDown, LockKeyhole, X } from "lucide-react";
+import { Link } from "wouter";
 
 type LessonSidebarProps = {
   parts: CoursePart[];
@@ -18,6 +21,13 @@ export function LessonSidebar({
   onClose,
   className = "",
 }: LessonSidebarProps) {
+  const [microLessonQuery, setMicroLessonQuery] = React.useState("");
+  const filteredMicroLessons = React.useMemo(() => {
+    const normalized = microLessonQuery.trim().toLocaleLowerCase();
+    if (!normalized) return detailedMicroLessons;
+    return detailedMicroLessons.filter((lesson) => [String(lesson.sequence), lesson.title, lesson.moduleTitle, lesson.objective].join(" ").toLocaleLowerCase().includes(normalized));
+  }, [microLessonQuery]);
+
   return (
     <aside className={`flex h-full w-[292px] flex-col border-r border-slate-200 bg-white ${className}`}>
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5">
@@ -33,6 +43,31 @@ export function LessonSidebar({
       </div>
 
       <nav className="scrollbar-thin flex-1 overflow-y-auto px-3 py-4" aria-label="သင်ခန်းစာများ">
+        <section className="mb-5 rounded-2xl border border-teal-200 bg-teal-50 p-3">
+          <div className="flex items-start gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-700 text-white"><BookOpen className="h-4 w-4" /></span>
+            <div className="min-w-0">
+              <p className="text-xs font-extrabold text-teal-950">Micro-Lesson Library</p>
+              <p className="mt-0.5 text-[11px] leading-5 text-teal-800">Dart အခြေခံမှ Flutter production အထိ {microLessonCount} ခု</p>
+            </div>
+          </div>
+          <Link href="/lessons?lesson=1" onClick={onClose} className="mt-3 flex min-h-10 w-full items-center justify-between rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-white transition hover:bg-slate-800">
+            <span>စာရင်းအပြည့်ဖတ်မည်</span><span aria-hidden="true">→</span>
+          </Link>
+          <div className="mt-3">
+            <label className="sr-only" htmlFor="slide-nav-micro-lesson-search">Micro-lesson ရှာရန်</label>
+            <input id="slide-nav-micro-lesson-search" value={microLessonQuery} onChange={(event) => setMicroLessonQuery(event.target.value)} placeholder="575 lesson ထဲမှရှာရန်" className="h-9 w-full rounded-lg border border-teal-200 bg-white px-2.5 text-[11px] outline-none placeholder:text-teal-700/60 focus:border-teal-600" />
+            <p className="mt-2 px-1 text-[10px] font-bold text-teal-800">{filteredMicroLessons.length}/{microLessonCount} ခု ပြသနေသည်</p>
+            <div className="mt-1.5 max-h-56 space-y-1 overflow-y-auto pr-1">
+              {filteredMicroLessons.map((lesson) => (
+                <Link key={lesson.id} href={`/lessons?lesson=${lesson.id}`} onClick={onClose} className="block rounded-lg px-2.5 py-2 text-[11px] font-semibold leading-5 text-teal-950 transition hover:bg-white">
+                  Lesson {lesson.sequence} · {lesson.title}
+                </Link>
+              ))}
+              {!filteredMicroLessons.length ? <p className="px-2 py-3 text-[11px] text-teal-800">ကိုက်ညီသော lesson မတွေ့ပါ။</p> : null}
+            </div>
+          </div>
+        </section>
         {parts.map((part, index) => {
           const completedInPart = part.chapters.filter((chapter) => completedIds.has(chapter.id)).length;
           return (

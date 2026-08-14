@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "wouter";
 import type { MicroLesson } from "@shared/microLessons";
 import { microLessonSearchHref, microLessonSearchLabel } from "@shared/searchResultLinks";

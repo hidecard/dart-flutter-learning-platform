@@ -120,3 +120,13 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 - [x] Prepare the permitted fix or exact Vercel UI action, then validate and document the production update boundary.
 
 Diagnosis: Vercel project `dart-flutter-learning-platform` is serving direct `_vercel deploy` snapshots rather than Git-linked deployments. Its deployment metadata has no Git commit/reference, while GitHub `main` is verified at `6bd239bea4629f10680a84e0a27329a949b2453a`; therefore GitHub pushes cannot auto-trigger this Vercel project. Required repair: connect `hidecard/dart-flutter-learning-platform` in Vercel Project Settings → Git, set production branch to `main`, then redeploy the connected project.
+
+### Slide navigation and direct study flow
+- [x] Add the 575-lesson library entry and visible lesson count inside the slide navigation bar on desktop and mobile.
+- [x] Make each slide-nav lesson selection open a readable micro-lesson study view with the selected lesson, code, explanation, practice, and a back/navigation path.
+- [ ] Validate the slide-nav flow with route, UI, mobile, build, checkpoint, GitHub, and Vercel deployment checks.
+
+### Complete slide-nav lesson selector
+- [x] Replace the four sample micro-lesson links in the slide navigation with a searchable full selector covering all 575 micro-lessons.
+- [x] Add regression coverage proving arbitrary lessons, including a non-contiguous lesson such as 251, open the exact `/lessons?lesson=...` study route.
+- [ ] Re-run desktop/mobile slide-nav verification and sync the completed fix through checkpoint, GitHub, and Vercel.
