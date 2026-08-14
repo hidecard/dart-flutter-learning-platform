@@ -108,4 +108,5 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 ### Learner visibility fix
 - [x] Remove the learner-facing CMS management header action while preserving admin route access for authorized users.
 - [x] Make the 575-lesson library visibly reachable from the homepage and verify the `/lessons` route renders the full inventory and selected lesson.
-- [ ] Validate the fix with tests, production build, responsive screenshots, checkpoint, and GitHub sync.
+- [x] Validate the fix with tests, production build, responsive screenshots, checkpoint, and GitHub sync.
+- [x] Capture and review mobile-width screenshots of `/` and `/lessons` after the learner visibility fix, confirming the 575-lesson entry point and absence of the CMS button.
