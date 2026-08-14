@@ -110,3 +110,6 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 - [x] Make the 575-lesson library visibly reachable from the homepage and verify the `/lessons` route renders the full inventory and selected lesson.
 - [x] Validate the fix with tests, production build, responsive screenshots, checkpoint, and GitHub sync.
 - [x] Capture and review mobile-width screenshots of `/` and `/lessons` after the learner visibility fix, confirming the 575-lesson entry point and absence of the CMS button.
+
+### Vercel production update request
+- [ ] Prepare the latest validated learner-visibility source for Vercel publishing and provide the Management UI Publish action; do not directly deploy from the agent.
