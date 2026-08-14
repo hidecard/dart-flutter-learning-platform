@@ -104,3 +104,8 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 ### Final authored/search UI verification
 - [x] Add regression assertions for non-contiguous authored Dart, Flutter widget/layout, state, API, testing, and release lesson IDs with unique non-template examples.
 - [x] Add a learner UI test for the Home search modal that verifies micro-lesson results render and link to `/lessons?lesson=...`; the extracted `MicroLessonSearchResults` component is rendered with React server markup and its href is asserted.
+
+### Learner visibility fix
+- [x] Remove the learner-facing CMS management header action while preserving admin route access for authorized users.
+- [x] Make the 575-lesson library visibly reachable from the homepage and verify the `/lessons` route renders the full inventory and selected lesson.
+- [ ] Validate the fix with tests, production build, responsive screenshots, checkpoint, and GitHub sync.
