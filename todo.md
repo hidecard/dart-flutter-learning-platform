@@ -88,7 +88,7 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 - [x] Write original detailed Burmese lesson content in batches, including concepts, syntax, code, line-by-line explanation, output, mistakes, exercises, and diagrams where useful.
 - [x] Integrate lesson units with search, learner navigation, CMS-safe existing chapter mappings, browser-local micro-lesson progress, certificate-compatible chapter mappings, and Dart Playground links.
 - [x] Add automated lesson-count, ordering, content-shape, mapping, and focused regression tests; run production build and responsive verification. The broader suite's two Turso-auth tests currently hit a remote ConnectTimeout, while 18 non-remote tests pass.
-- [ ] Save checkpoints after major batches and push the validated 500-lesson curriculum to public GitHub.
+- [x] Save checkpoints after major batches and push the validated 500-lesson curriculum to public GitHub.
 
 ### 500-lesson quality and platform integration follow-ups
 - [x] Replace repetitive generated examples with genuinely topic-specific Burmese content and unique Dart/Flutter code for the first authored lesson batches, then extend the same authoring pattern across the inventory.
