@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, BookOpen, CheckCircle2, Code2, Search, Target } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, Code2, PlayCircle, Search, Target } from "lucide-react";
 import { detailedMicroLessons, detailedMicroLessonModules, microLessonCount, type MicroLesson } from "@shared/courseCatalog";
 
 function LessonCard({ lesson, selected, onSelect }: { lesson: MicroLesson; selected: boolean; onSelect: () => void }) {
@@ -18,9 +18,19 @@ function LessonCard({ lesson, selected, onSelect }: { lesson: MicroLesson; selec
 }
 
 export default function MicroLessons() {
+  const requestedLessonId = Number(new URLSearchParams(window.location.search).get("lesson"));
   const [query, setQuery] = useState("");
   const [moduleId, setModuleId] = useState("all");
-  const [selectedId, setSelectedId] = useState(1);
+  const [selectedId, setSelectedId] = useState(Number.isInteger(requestedLessonId) && requestedLessonId > 0 ? requestedLessonId : 1);
+  const [completedIds, setCompletedIds] = useState<number[]>([]);
+  useEffect(() => {
+    try { setCompletedIds(JSON.parse(window.localStorage.getItem("micro-lesson-completed") ?? "[]")); } catch { setCompletedIds([]); }
+  }, []);
+  function toggleCompleted() {
+    const next = completedIds.includes(selected.id) ? completedIds.filter((id) => id !== selected.id) : [...completedIds, selected.id];
+    setCompletedIds(next);
+    window.localStorage.setItem("micro-lesson-completed", JSON.stringify(next));
+  }
   const filtered = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return detailedMicroLessons.filter((lesson) => {
@@ -44,6 +54,7 @@ export default function MicroLessons() {
           <p className="text-xs font-bold tracking-[0.18em] text-teal-300">SEQUENTIAL LEARNING LIBRARY</p>
           <h1 className="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-4xl">Dart အခြေခံမှ Flutter Production အထိ Lesson {microLessonCount} ခန့်</h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">Dart ဆိုတာဘာလဲ၊ Flutter က widget tree ကိုဘယ်လိုတည်ဆောက်သလဲ၊ setup ကနေ testing၊ API၊ platform integration နှင့် release အထိ topic တစ်ခုချင်းစီကို အစဉ်လိုက်ဖတ်နိုင်ပါသည်။</p>
+          <div className="mt-6 max-w-xl"><div className="flex justify-between text-xs font-bold text-slate-300"><span>ကိုယ်ပိုင်ဖတ်ရှုမှု</span><span>{completedIds.length}/{microLessonCount}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-teal-400 transition-all" style={{ width: `${(completedIds.length / microLessonCount) * 100}%` }} /></div></div>
         </div>
         <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
           <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] lg:overflow-hidden">
@@ -57,10 +68,12 @@ export default function MicroLessons() {
             <h2 className="mt-5 text-3xl font-black leading-tight text-slate-950">{selected.title}</h2>
             <section className="mt-8 grid gap-4 md:grid-cols-2"><div className="rounded-xl bg-sky-50 p-5"><div className="flex items-center gap-2 font-extrabold text-sky-950"><Target className="h-4 w-4" /> ဒီ lesson ပြီးလျှင်</div><p className="mt-3 text-sm leading-7 text-slate-700">{selected.objective}</p></div><div className="rounded-xl bg-amber-50 p-5"><div className="flex items-center gap-2 font-extrabold text-amber-950"><BookOpen className="h-4 w-4" /> ဘာကြောင့်လေ့လာရသလဲ</div><p className="mt-3 text-sm leading-7 text-slate-700">{selected.whyItMatters}</p></div></section>
             <section className="mt-8"><h3 className="text-xl font-black">အယူအဆကို နားလည်မယ်</h3><p className="mt-3 text-base leading-8 text-slate-700">{selected.concept}</p></section>
+            {selected.diagram && <section className="mt-8 rounded-2xl border border-cyan-100 bg-cyan-50/60 p-5"><h3 className="text-xl font-black text-cyan-950">Diagram — {selected.diagram.title}</h3><div className="mt-4 flex flex-wrap items-center gap-2">{selected.diagram.nodes.map((node, index) => <span key={node} className="flex items-center gap-2"><span className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-cyan-950 shadow-sm ring-1 ring-cyan-100">{node}</span>{index < selected.diagram!.nodes.length - 1 && <span className="text-cyan-700">→</span>}</span>)}</div></section>}
             <section className="mt-8"><h3 className="flex items-center gap-2 text-xl font-black"><Code2 className="h-5 w-5 text-teal-700" /> Syntax နှင့် Code</h3><pre className="mt-3 overflow-x-auto rounded-2xl bg-slate-950 p-5 text-sm leading-7 text-amber-200"><code>{selected.syntax}\n\n{selected.example}</code></pre></section>
             <section className="mt-8"><h3 className="text-xl font-black">Code ကို တစ်ကြောင်းချင်းဖတ်မယ်</h3><ol className="mt-3 space-y-3">{selected.lineByLine.map((line, index) => <li key={line} className="flex gap-3 text-sm leading-7 text-slate-700"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-700 text-xs font-bold text-white">{index + 1}</span><span>{line}</span></li>)}</ol></section>
             <section className="mt-8 grid gap-4 md:grid-cols-2"><div className="rounded-xl bg-emerald-50 p-5"><h3 className="font-black text-emerald-950">မျှော်မှန်းရလဒ်</h3><p className="mt-3 text-sm leading-7 text-emerald-950">{selected.expectedOutput}</p></div><div className="rounded-xl bg-rose-50 p-5"><h3 className="font-black text-rose-950">မကြာခဏမှားတတ်သောအချက်</h3>{selected.commonMistakes.map((item) => <p key={item.mistake} className="mt-3 text-sm leading-7 text-slate-700"><strong>{item.mistake}</strong><br />ပြင်ဆင်နည်း — {item.fix}</p>)}</div></section>
             <section className="mt-8 rounded-2xl border border-violet-100 bg-violet-50 p-5"><div className="flex items-center gap-2 font-black text-violet-950"><CheckCircle2 className="h-5 w-5" /> လက်တွေ့လေ့ကျင့်ခန်း</div><p className="mt-3 text-sm leading-7 text-violet-950">{selected.exercise}</p></section>
+            <div className="mt-6 flex flex-wrap gap-3"><button onClick={toggleCompleted} className={`inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold text-white ${completedIds.includes(selected.id) ? "bg-emerald-700" : "bg-slate-950"}`}><CheckCircle2 className="h-4 w-4" />{completedIds.includes(selected.id) ? "ဒီ lesson ပြီးစီးပြီး" : "ပြီးစီးကြောင်းမှတ်မည်"}</button><Link href={`/playground?microLesson=${selected.id}&chapter=${selected.chapterId}`} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-teal-300 bg-white px-4 py-2.5 text-sm font-bold text-teal-800"><PlayCircle className="h-4 w-4" />ဒီ lesson code စမ်းမည်</Link></div>
           </article>
         </div>
       </main>

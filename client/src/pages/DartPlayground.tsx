@@ -1,24 +1,27 @@
-import { allChapters } from "@shared/courseCatalog";
+import { allChapters, detailedMicroLessons } from "@shared/courseCatalog";
 import { dartPadWorkspaceUrl } from "@shared/playground";
 import { ArrowLeft, CheckCircle2, Clipboard, ClipboardCheck, ExternalLink, Play, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 
 export default function DartPlayground() {
-  const requestedChapterId = Number(new URLSearchParams(window.location.search).get("chapter"));
+  const params = new URLSearchParams(window.location.search);
+  const requestedChapterId = Number(params.get("chapter"));
+  const requestedMicroLessonId = Number(params.get("microLesson"));
+  const initialMicroLesson = useMemo(() => detailedMicroLessons.find((lesson) => lesson.id === requestedMicroLessonId), [requestedMicroLessonId]);
   const initialChapter = useMemo(
     () => allChapters.find((chapter) => chapter.id === requestedChapterId) ?? allChapters[0]!,
     [requestedChapterId],
   );
   const [selectedChapterId, setSelectedChapterId] = useState(initialChapter.id);
   const selectedChapter = allChapters.find((chapter) => chapter.id === selectedChapterId) ?? initialChapter;
-  const [code, setCode] = useState(selectedChapter.code.code);
+  const [code, setCode] = useState(initialMicroLesson?.example ?? selectedChapter.code.code);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setCode(selectedChapter.code.code);
+    setCode(selectedChapter.id === initialChapter.id && initialMicroLesson ? initialMicroLesson.example : selectedChapter.code.code);
     setCopied(false);
-  }, [selectedChapter.id]);
+  }, [initialChapter.id, initialMicroLesson, selectedChapter.id]);
 
   async function copyCode() {
     await navigator.clipboard.writeText(code);
@@ -45,7 +48,7 @@ export default function DartPlayground() {
       <section className="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:py-12">
         <div className="max-w-3xl">
           <p className="text-xs font-bold tracking-[0.16em] text-teal-700">PRACTICE IN YOUR BROWSER</p>
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">Dart Code Playground</h1>
+          <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">Dart Code Playground</h1>{initialMicroLesson && <p className="mt-2 text-sm font-bold text-teal-700">Micro-lesson {initialMicroLesson.sequence}: {initialMicroLesson.title}</p>}
           <p className="mt-4 text-base leading-8 text-slate-600">ဒီနေရာတွင် lesson code ကိုပြင်ပြီး DartPad တွင်run လုပ်ကာ output နှင့်error ကိုချက်ချင်းကြည့်နိုင်ပါသည်။ သင်၏code ကိုဤwebsite server သို့မပို့ဘဲ DartPad browser workspace တွင်သာrun လုပ်ပါသည်။</p>
         </div>
 

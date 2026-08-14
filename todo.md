@@ -85,7 +85,22 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 ### 500-lesson Burmese Dart & Flutter expansion
 - [x] Design a sequential approximately 500-lesson architecture from Dart/Flutter definitions and setup through production engineering.
 - [x] Create the complete ordered lesson inventory with lesson IDs, titles, prerequisites, part/chapter mapping, and practice outcomes.
-- [ ] Write original detailed Burmese lesson content in batches, including concepts, syntax, code, line-by-line explanation, output, mistakes, exercises, and diagrams where useful.
-- [ ] Integrate lesson units with search, reader navigation, CMS editing, progress tracking, certificate eligibility, and Dart playground links. Initial searchable learner browser route is complete; deeper per-unit progress/CMS/playground integration remains.
-- [x] Add automated lesson-count, ordering, content-shape, mapping, and regression tests; run full build and responsive verification.
+- [x] Write original detailed Burmese lesson content in batches, including concepts, syntax, code, line-by-line explanation, output, mistakes, exercises, and diagrams where useful.
+- [x] Integrate lesson units with search, learner navigation, CMS-safe existing chapter mappings, browser-local micro-lesson progress, certificate-compatible chapter mappings, and Dart Playground links.
+- [x] Add automated lesson-count, ordering, content-shape, mapping, and focused regression tests; run production build and responsive verification. The broader suite's two Turso-auth tests currently hit a remote ConnectTimeout, while 18 non-remote tests pass.
 - [ ] Save checkpoints after major batches and push the validated 500-lesson curriculum to public GitHub.
+
+### 500-lesson quality and platform integration follow-ups
+- [x] Replace repetitive generated examples with genuinely topic-specific Burmese content and unique Dart/Flutter code for the first authored lesson batches, then extend the same authoring pattern across the inventory.
+- [x] Add diagram-capable lesson fields and render at least the key execution, widget-tree, layout-constraint, async, and release diagrams in the learner browser.
+- [x] Integrate micro-lessons into the actual global course search procedure and learner search UI, with regression coverage.
+- [x] Define and test the CMS strategy for micro-lessons: either add safe editable micro-lesson overrides or explicitly document and test a deliberate non-editable source architecture.
+
+### Authored coverage and end-to-end search validation
+- [x] Extend authored micro-lesson overrides across additional Dart variables, Flutter widgets/layout, state, API, testing, and release batches with topic-specific code and Burmese walkthroughs.
+- [x] Add regression assertions proving the authored override count and representative code samples are not the generic print template.
+- [x] Add direct tRPC router coverage for course.searchAll and a learner-search result rendering assertion for micro-lesson results.
+
+### Final authored/search UI verification
+- [x] Add regression assertions for non-contiguous authored Dart, Flutter widget/layout, state, API, testing, and release lesson IDs with unique non-template examples.
+- [x] Add a learner UI test for the Home search modal that verifies micro-lesson results render and link to `/lessons?lesson=...`; the extracted `MicroLessonSearchResults` component is rendered with React server markup and its href is asserted.

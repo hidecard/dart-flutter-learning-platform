@@ -5,6 +5,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { authenticateLocalAccount, clearLocalSessionCookie, createLocalAccount, createLocalSession, deleteLocalSession, readLocalSessionToken, setLocalSessionCookie } from "./localAuth";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { searchAllLearningContent } from "../shared/courseCatalog";
 
 const editableLessonContentSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -75,6 +76,12 @@ export const appRouter = router({
     search: publicProcedure
       .input(z.object({ query: z.string().trim().max(100) }))
       .query(async ({ input }) => searchCourse(input.query, await getMergedCatalog())),
+    searchAll: publicProcedure
+      .input(z.object({ query: z.string().trim().max(100) }))
+      .query(async ({ input }) => ({
+        ...searchAllLearningContent(input.query),
+        chapters: searchCourse(input.query, await getMergedCatalog()),
+      })),
   }),
   progress: router({
     list: protectedProcedure.query(({ ctx }) => getChapterProgressForUser(ctx.user.id)),

@@ -1,9 +1,11 @@
 import { LessonReader } from "@/components/LessonReader";
 import { LessonSidebar } from "@/components/LessonSidebar";
+import { MicroLessonSearchResults } from "@/components/MicroLessonSearchResults";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { allChapters, courseParts } from "@shared/courseCatalog";
 import { flutterPdfCoverage } from "@shared/flutterPdfCoverage";
+import { microLessonSearchHref, microLessonSearchLabel } from "@shared/searchResultLinks";
 import { Award, BookOpen, CheckCircle2, ChevronRight, CircleHelp, Command, GraduationCap, Library, Menu, Search, Sparkles, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
@@ -68,7 +70,7 @@ export default function Home() {
   const catalogQuery = trpc.course.catalog.useQuery();
   const progressQuery = trpc.progress.list.useQuery(undefined, { enabled: isAuthenticated });
   const certificateStatusQuery = trpc.certificate.status.useQuery(undefined, { enabled: isAuthenticated });
-  const searchQuery = trpc.course.search.useQuery({ query: searchTerm }, { enabled: searchTerm.trim().length > 1 });
+  const searchQuery = trpc.course.searchAll.useQuery({ query: searchTerm }, { enabled: searchTerm.trim().length > 1 });
   const saveProgress = trpc.progress.setCompleted.useMutation({
     onSuccess: () => { utils.progress.list.invalidate(); utils.certificate.status.invalidate(); },
     onError: () => toast.error("ပြီးစီးမှုကိုမသိမ်းဆည်းနိုင်သေးပါ။ ထပ်စမ်းကြည့်ပါ။"),
@@ -102,7 +104,7 @@ export default function Home() {
       </div>
 
       {sidebarOpen ? <div className="fixed inset-0 z-50 lg:hidden"><button className="absolute inset-0 bg-slate-950/35" onClick={() => setSidebarOpen(false)} aria-label="မီနူးပိတ်ရန်" /><div className="relative h-full w-[min(88vw,330px)] shadow-2xl"><LessonSidebar parts={learningParts} activeChapterId={activeChapterId} completedIds={completedIds} onSelect={selectChapter} onClose={() => setSidebarOpen(false)} /></div></div> : null}
-      {searchOpen ? <div className="fixed inset-0 z-[60] flex items-start justify-center bg-slate-950/45 px-4 pt-[10vh] backdrop-blur-sm"><div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"><div className="flex items-center border-b border-slate-200 px-4"><Search className="h-5 w-5 text-slate-400" /><input autoFocus value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="အခန်း၊ ခေါင်းစဉ်၊ topic သို့မဟုတ် code keyword ရှာရန်" className="h-14 min-w-0 flex-1 px-3 text-sm outline-none placeholder:text-slate-400" /><button onClick={() => { setSearchOpen(false); setSearchTerm(""); }} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"><X className="h-4 w-4" /></button></div><div className="max-h-[55vh] overflow-y-auto p-2">{searchTerm.trim().length < 2 ? <p className="px-4 py-8 text-center text-sm text-slate-500">အနည်းဆုံးစာလုံး ၂ လုံးရိုက်ထည့်ပြီး စာအုပ်တစ်လျှောက်ရှာနိုင်ပါသည်။</p> : searchQuery.isLoading ? <p className="px-4 py-8 text-center text-sm text-slate-500">ရှာဖွေနေသည်…</p> : (searchQuery.data ?? []).length ? (searchQuery.data ?? []).map((chapter) => <button key={chapter.id} onClick={() => { selectChapter(chapter.id); setSearchOpen(false); setSearchTerm(""); }} className="block w-full rounded-xl px-4 py-3 text-left hover:bg-teal-50"><p className="text-xs font-bold text-teal-700">{chapter.partTitle} · အခန်း {chapter.id}</p><p className="mt-1 text-sm font-bold text-slate-800">{chapter.title}</p><p className="mt-1 line-clamp-1 text-xs text-slate-500">{chapter.summary}</p></button>) : <p className="px-4 py-8 text-center text-sm text-slate-500">ကိုက်ညီသောသင်ခန်းစာမတွေ့ပါ။ အခြားစကားလုံးဖြင့်စမ်းကြည့်ပါ။</p>}</div></div></div> : null}
+      {searchOpen ? <div className="fixed inset-0 z-[60] flex items-start justify-center bg-slate-950/45 px-4 pt-[10vh] backdrop-blur-sm"><div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"><div className="flex items-center border-b border-slate-200 px-4"><Search className="h-5 w-5 text-slate-400" /><input autoFocus value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="အခန်း၊ ခေါင်းစဉ်၊ topic သို့မဟုတ် code keyword ရှာရန်" className="h-14 min-w-0 flex-1 px-3 text-sm outline-none placeholder:text-slate-400" /><button onClick={() => { setSearchOpen(false); setSearchTerm(""); }} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"><X className="h-4 w-4" /></button></div><div className="max-h-[55vh] overflow-y-auto p-2">{searchTerm.trim().length < 2 ? <p className="px-4 py-8 text-center text-sm text-slate-500">အနည်းဆုံးစာလုံး ၂ လုံးရိုက်ထည့်ပြီး စာအုပ်တစ်လျှောက်ရှာနိုင်ပါသည်။</p> : searchQuery.isLoading ? <p className="px-4 py-8 text-center text-sm text-slate-500">ရှာဖွေနေသည်…</p> : ((searchQuery.data?.chapters.length ?? 0) + (searchQuery.data?.microLessons.length ?? 0)) ? <>{(searchQuery.data?.chapters ?? []).map((chapter) => <button key={`chapter-${chapter.id}`} onClick={() => { selectChapter(chapter.id); setSearchOpen(false); setSearchTerm(""); }} className="block w-full rounded-xl px-4 py-3 text-left hover:bg-teal-50"><p className="text-xs font-bold text-teal-700">{chapter.partTitle} · အခန်း {chapter.id}</p><p className="mt-1 text-sm font-bold text-slate-800">{chapter.title}</p><p className="mt-1 line-clamp-1 text-xs text-slate-500">{chapter.summary}</p></button>)}<MicroLessonSearchResults microLessons={searchQuery.data?.microLessons ?? []} onClose={() => { setSearchOpen(false); setSearchTerm(""); }} /></> : <p className="px-4 py-8 text-center text-sm text-slate-500">ကိုက်ညီသောသင်ခန်းစာမတွေ့ပါ။ အခြားစကားလုံးဖြင့်စမ်းကြည့်ပါ။</p>}</div></div></div> : null}
     </div>
   );
 }

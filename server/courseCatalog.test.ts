@@ -4,6 +4,9 @@ import { detailedMicroLessons, microLessonCount } from "../shared/courseCatalog"
 import { flutterPdfCoverage, flutterPdfTopicCount } from "../shared/flutterPdfCoverage";
 import { flutterPdfGapAnalysis, pdfMissingOrShallowTopicCount } from "../shared/flutterPdfGapAnalysis";
 import { topicExplanationsForChapter } from "../shared/topicExplanations";
+import { cmsContextForMicroLesson, microLessonCmsStrategy } from "../shared/microLessonCms";
+import { authoredMicroLessonCount, authoredMicroLessonOverrides } from "../shared/microLessonAuthored";
+import { microLessonSearchHref, microLessonSearchLabel } from "../shared/searchResultLinks";
 
 describe("course catalog", () => {
   it("contains the detailed curriculum and the advanced Flutter platform coverage", () => {
@@ -21,8 +24,18 @@ describe("course catalog", () => {
     expect(detailedMicroLessons.map((lesson) => lesson.id)).toEqual(Array.from({ length: microLessonCount }, (_, index) => index + 1));
     expect(detailedMicroLessons.every((lesson) => lesson.objective.length > 40 && lesson.concept.length > 40 && lesson.example.length > 0 && lesson.lineByLine.length >= 3 && lesson.exercise.length > 30)).toBe(true);
     expect(detailedMicroLessons.every((lesson) => courseParts.some((part) => part.id === lesson.partId && part.chapters.some((chapter) => chapter.id === lesson.chapterId)))).toBe(true);
+    expect(detailedMicroLessons.filter((lesson) => lesson.diagram && lesson.diagram.nodes.length >= 3).length).toBeGreaterThanOrEqual(5);
+    expect(authoredMicroLessonCount).toBeGreaterThanOrEqual(20);
+    expect(detailedMicroLessons.slice(0, authoredMicroLessonCount).filter((lesson) => lesson.example.includes("lessonValue")).length).toBeLessThan(authoredMicroLessonCount);
+    for (const id of [1, 12, 18, 251, 276, 351, 401, 476, 526]) {
+      expect(authoredMicroLessonOverrides[id]?.example).toBeTruthy();
+      expect(authoredMicroLessonOverrides[id]?.example).not.toContain(`lessonValue${id}`);
+    }
+    expect(microLessonSearchHref(251)).toBe("/lessons?lesson=251");
+    expect(microLessonSearchLabel(251, "Flutter Core Widgets")).toContain("Micro-lesson 251");
     expect(searchAllLearningContent("Dart language ဆိုတာဘာလဲ").microLessons.length).toBeGreaterThan(0);
     expect(searchAllLearningContent("Flutter Doctor").microLessons.length).toBeGreaterThan(0);
+    expect(searchAllLearningContent("Dart").chapters.length).toBeGreaterThan(0);
   });
 
   it("finds relevant lessons by Burmese topic and code keyword", () => {
@@ -75,6 +88,13 @@ describe("course catalog", () => {
       );
     })).toBe(true);
     expect(flutterPdfGapAnalysis.every((gap) => gap.plannedChapterIds.length > 0 && gap.BurmesePlan.length > 30)).toBe(true);
+  });
+
+  it("keeps micro-lesson CMS content source-controlled with chapter-level override context", () => {
+    expect(microLessonCmsStrategy.editableInAdminCms).toBe(false);
+    expect(microLessonCmsStrategy.sourceOfTruth).toBe("shared/microLessons.ts");
+    const context = cmsContextForMicroLesson(detailedMicroLessons[0]);
+    expect(context).toMatchObject({ microLessonId: 1, mappedChapterId: 1, mappedPartId: "dart-fundamentals", editableByExistingChapterCms: false });
   });
 
   it("returns no lessons for an empty search", () => {

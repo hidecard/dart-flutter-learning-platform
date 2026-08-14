@@ -1,3 +1,5 @@
+import { authoredMicroLessonOverrides } from "./microLessonAuthored";
+
 export type MicroLesson = {
   id: number;
   slug: string;
@@ -18,6 +20,7 @@ export type MicroLesson = {
   expectedOutput: string;
   commonMistakes: { mistake: string; fix: string }[];
   exercise: string;
+  diagram?: { title: string; nodes: string[] };
 };
 
 type CurriculumModule = {
@@ -80,6 +83,17 @@ const levelFor = (level: MicroLesson["level"], sequence: number): MicroLesson["l
   return level === "အစပြုသူ" || level === "အလယ်အလတ်" ? "အဆင့်မြင့်" : level;
 };
 
+function diagramFor(moduleId: string): { title: string; nodes: string[] } | undefined {
+  const diagrams: Record<string, { title: string; nodes: string[] }> = {
+    "dart-orientation": { title: "Dart code အလုပ်လုပ်သည့်လမ်းကြောင်း", nodes: ["Source code", "Dart analyzer/compiler", "Dart runtime", "Console output"] },
+    "flutter-orientation": { title: "Flutter widget tree မှ screen အထိ", nodes: ["Widget tree", "Build phase", "Render objects", "Rasterized frame"] },
+    "flutter-layout": { title: "Flutter layout constraint flow", nodes: ["Parent constraints", "Child size", "Parent position", "Paint"] },
+    "dart-async": { title: "Future/async အလုပ်လုပ်ပုံ", nodes: ["Call async function", "Future pending", "Event loop continues", "Value or error"] },
+    "flutter-delivery": { title: "Release pipeline", nodes: ["Format/analyze/test", "Build artifact", "Signing", "Beta rollout", "Monitor and rollback"] },
+  };
+  return diagrams[moduleId];
+}
+
 function makeMicroLesson(module: CurriculumModule, topic: string, progression: string, sequence: number, topicIndex: number, mapping: { partId: string; chapterId: number }): MicroLesson {
   const title = `${module.title}: ${topic} — ${progression}`;
   const safeSlug = `${sequence}-${module.id}-${topicIndex + 1}`;
@@ -112,6 +126,8 @@ function makeMicroLesson(module: CurriculumModule, topic: string, progression: s
       { mistake: "အမှားဖြစ်သောအခါ error message မဖတ်ဘဲ code အားလုံးကိုတစ်ပြိုင်နက်ပြောင်းခြင်း", fix: "ပထမဆုံး error line, type, expected value နှင့် actual value ကိုခွဲဖတ်ပါ။" },
     ],
     exercise: `“${topic}” ကိုသုံးပြီး ကိုယ်ပိုင်နမူနာတစ်ခုရေးပါ။ မူရင်း code မှ value တစ်ခုကိုပြောင်း၊ output ကိုခန့်မှန်း၊ DartPad/terminal တွင် run ပြီး မိမိတွေ့ရှိချက်ကို စာကြောင်းသုံးကြောင်းရေးပါ။`,
+    ...authoredMicroLessonOverrides[sequence],
+    diagram: diagramFor(module.id),
   };
 }
 
