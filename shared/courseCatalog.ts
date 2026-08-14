@@ -1,6 +1,8 @@
 import { fallbackStudyGuide, lessonStudyGuides, type StudyGuide } from "./lessonStudyGuides";
 import { topicExplanationsForChapter, type TopicExplanation } from "./topicExplanations";
 import { pdfTopicsForChapter } from "./flutterPdfCoverage";
+import { microLessons, microLessonCount, microLessonModules, searchMicroLessons, type MicroLesson } from "./microLessons";
+export type { MicroLesson } from "./microLessons";
 
 export type CodeExample = {
   language: string;
@@ -231,6 +233,15 @@ export const courseParts: CoursePart[] = [
 export const allChapters = courseParts.flatMap((part) =>
   part.chapters.map((chapter) => ({ ...chapter, partId: part.id, partTitle: part.title })),
 );
+
+export const detailedMicroLessons = microLessons;
+export const detailedMicroLessonModules = microLessonModules;
+export { microLessonCount };
+export const totalCurriculumLessonCount = allChapters.length + microLessonCount;
+
+export function searchAllLearningContent(query: string): { chapters: typeof allChapters; microLessons: MicroLesson[] } {
+  return { chapters: searchCourse(query), microLessons: searchMicroLessons(query) };
+}
 
 export function toEditableLessonContent(chapter: Chapter): EditableLessonContent {
   return {

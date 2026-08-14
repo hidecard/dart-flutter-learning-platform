@@ -10,6 +10,7 @@ import DartPlayground from "./pages/DartPlayground";
 import Glossary from "./pages/Glossary";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
+import MicroLessons from "./pages/MicroLessons";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/admin"} component={AdminCms} />
       <Route path={"/certificate"} component={Certificate} />
       <Route path={"/playground"} component={DartPlayground} />
+      <Route path={"/lessons"} component={MicroLessons} />
       <Route path={"/signin"} component={SignIn} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/404"} component={NotFound} />

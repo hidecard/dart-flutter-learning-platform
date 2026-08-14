@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { allChapters, courseParts, searchCourse } from "../shared/courseCatalog";
+import { allChapters, courseParts, searchAllLearningContent, searchCourse, totalCurriculumLessonCount } from "../shared/courseCatalog";
+import { detailedMicroLessons, microLessonCount } from "../shared/courseCatalog";
 import { flutterPdfCoverage, flutterPdfTopicCount } from "../shared/flutterPdfCoverage";
 import { flutterPdfGapAnalysis, pdfMissingOrShallowTopicCount } from "../shared/flutterPdfGapAnalysis";
 import { topicExplanationsForChapter } from "../shared/topicExplanations";
@@ -10,6 +11,18 @@ describe("course catalog", () => {
     expect(allChapters).toHaveLength(56);
     expect(allChapters.find((chapter) => chapter.id === 31)?.title).toContain("Hot Reload");
     expect(allChapters.find((chapter) => chapter.id === 56)?.title).toContain("Monitoring");
+  });
+
+  it("contains the approximately 500-lesson sequential beginner-to-production inventory", () => {
+    expect(microLessonCount).toBeGreaterThanOrEqual(500);
+    expect(totalCurriculumLessonCount).toBe(56 + microLessonCount);
+    expect(detailedMicroLessons[0]).toMatchObject({ id: 1, moduleId: "dart-orientation", level: "အစပြုသူ" });
+    expect(detailedMicroLessons.at(-1)?.level).toBe("Production");
+    expect(detailedMicroLessons.map((lesson) => lesson.id)).toEqual(Array.from({ length: microLessonCount }, (_, index) => index + 1));
+    expect(detailedMicroLessons.every((lesson) => lesson.objective.length > 40 && lesson.concept.length > 40 && lesson.example.length > 0 && lesson.lineByLine.length >= 3 && lesson.exercise.length > 30)).toBe(true);
+    expect(detailedMicroLessons.every((lesson) => courseParts.some((part) => part.id === lesson.partId && part.chapters.some((chapter) => chapter.id === lesson.chapterId)))).toBe(true);
+    expect(searchAllLearningContent("Dart language ဆိုတာဘာလဲ").microLessons.length).toBeGreaterThan(0);
+    expect(searchAllLearningContent("Flutter Doctor").microLessons.length).toBeGreaterThan(0);
   });
 
   it("finds relevant lessons by Burmese topic and code keyword", () => {

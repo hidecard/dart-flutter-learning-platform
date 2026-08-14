@@ -81,3 +81,11 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 
 ### GitHub-only delivery constraint
 - [x] Push and verify the latest validated PDF-derived curriculum on public GitHub `main` only; do not trigger or rely on Vercel deployment for this delivery.
+
+### 500-lesson Burmese Dart & Flutter expansion
+- [x] Design a sequential approximately 500-lesson architecture from Dart/Flutter definitions and setup through production engineering.
+- [x] Create the complete ordered lesson inventory with lesson IDs, titles, prerequisites, part/chapter mapping, and practice outcomes.
+- [ ] Write original detailed Burmese lesson content in batches, including concepts, syntax, code, line-by-line explanation, output, mistakes, exercises, and diagrams where useful.
+- [ ] Integrate lesson units with search, reader navigation, CMS editing, progress tracking, certificate eligibility, and Dart playground links. Initial searchable learner browser route is complete; deeper per-unit progress/CMS/playground integration remains.
+- [x] Add automated lesson-count, ordering, content-shape, mapping, and regression tests; run full build and responsive verification.
+- [ ] Save checkpoints after major batches and push the validated 500-lesson curriculum to public GitHub.
