@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { allChapters, courseParts, searchCourse } from "../shared/courseCatalog";
 import { flutterPdfCoverage, flutterPdfTopicCount } from "../shared/flutterPdfCoverage";
 import { flutterPdfGapAnalysis, pdfMissingOrShallowTopicCount } from "../shared/flutterPdfGapAnalysis";
+import { topicExplanationsForChapter } from "../shared/topicExplanations";
 
 describe("course catalog", () => {
   it("contains the detailed curriculum and the advanced Flutter platform coverage", () => {
@@ -54,6 +55,12 @@ describe("course catalog", () => {
     expect(flutterPdfGapAnalysis.length).toBeGreaterThanOrEqual(10);
     expect(pdfMissingOrShallowTopicCount).toBe(0);
     expect(flutterPdfGapAnalysis.every((gap) => gap.gapLevel === "covered")).toBe(true);
+    expect(flutterPdfGapAnalysis.every((gap) => {
+      const topics = topicExplanationsForChapter(gap.explanationChapterId);
+      return topics.length > 0 && topics.every((topic) =>
+        topic.name.length > 0 && topic.example.length > 0 && topic.howItWorks.length > 0 && topic.lineByLine.length > 0,
+      );
+    })).toBe(true);
     expect(flutterPdfGapAnalysis.every((gap) => gap.plannedChapterIds.length > 0 && gap.BurmesePlan.length > 30)).toBe(true);
   });
 

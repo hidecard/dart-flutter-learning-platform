@@ -54,7 +54,7 @@
 - [x] Build a learner progress dashboard with clear overall/part progress bars and a printable completion certificate.
 - [x] Test, publish, and verify the enhanced curriculum, progress, and certificate experience.
 - [x] Verify the live Vercel learner route renders the updated 56-chapter advanced Flutter content after the latest deployment.
-- [ ] Verify authenticated production progress and certificate eligibility behavior without altering learner completion data.
+- [x] Defer authenticated production progress and certificate eligibility verification because this delivery is explicitly GitHub-only and must not rely on Vercel.
 - [x] Remove the remaining visible Step-by-Step wording from legacy lesson titles before the final production verification.
 - [x] Add topic-by-topic Burmese explanations for Dart declarations and Flutter widgets, including purpose, syntax, execution behavior, annotated examples, output, mistakes, and practical usage.
 - [x] Render the topic explanation sections in the learner reader and keep lesson code/playground links compatible.
@@ -74,7 +74,10 @@
 - [x] Compare every PDF chapter/topic with the existing 56-chapter curriculum and identify missing or shallow coverage.
 - [x] Add original Burmese explanations and code-focused lessons for missing PDF topics without reproducing the book's protected prose verbatim.
 - [x] Integrate the expanded topic inventory with chapter search, reader rendering, CMS-safe content, progress tracking, and playground links.
-- [ ] Validate coverage completeness, tests, build, visual rendering, checkpoint, GitHub sync, and production status.
+- [x] Validate coverage completeness, tests, build, visual rendering, checkpoint, and GitHub sync; production status is intentionally excluded by the GitHub-only delivery constraint.
 
 Source PDF: https://content.gitbook.com/content/egsIWleSdyH9rMLJ8ShI/blobs/xxfDEN1b4KipvOxna4wP/Flutter-Coding.pdf
 Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduction to Mobile App Development" by Edward Thornton; 256 pages; 2021.
+
+### GitHub-only delivery constraint
+- [x] Push and verify the latest validated PDF-derived curriculum on public GitHub `main` only; do not trigger or rely on Vercel deployment for this delivery.
