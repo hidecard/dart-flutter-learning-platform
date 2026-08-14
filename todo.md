@@ -113,3 +113,10 @@ Source metadata: "Coding Projects in Flutter: A Hands-On, Project-Based Introduc
 
 ### Vercel production update request
 - [ ] Prepare the latest validated learner-visibility source for Vercel publishing and provide the Management UI Publish action; do not directly deploy from the agent.
+
+### Vercel synchronization diagnosis
+- [ ] Inspect Vercel project/repository linkage, latest deployment commit, and deployment error state.
+- [ ] Compare the linked Vercel project configuration with public GitHub `main` and identify why commit `6bd239b` or later is not deploying.
+- [ ] Prepare the permitted fix or exact Vercel UI action, then validate and document the production update boundary.
+
+Diagnosis: Vercel project `dart-flutter-learning-platform` is serving direct `_vercel deploy` snapshots rather than Git-linked deployments. Its deployment metadata has no Git commit/reference, while GitHub `main` is verified at `6bd239bea4629f10680a84e0a27329a949b2453a`; therefore GitHub pushes cannot auto-trigger this Vercel project. Required repair: connect `hidecard/dart-flutter-learning-platform` in Vercel Project Settings → Git, set production branch to `main`, then redeploy the connected project.
